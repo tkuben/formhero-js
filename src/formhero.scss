@@ -1,0 +1,219 @@
+@import 'bourbon';
+/*===========================================================
+    File: formhero-ui-common.scss
+    TABLE OF CONTENTS
+    1) Breakpoints
+    2) Gutters
+    3) Material Design Add-ons and overrides
+    4) Z-index
+    5) Variables
+    6) Fonts
+    7) General
+===========================================================*/
+
+/* ===================================================================================== */
+/* !BREAK POINTS */
+
+$screen-xs: 480px;
+$screen-sm: 768px;
+$screen-md: 992px;
+$screen-lg: 1200px;
+
+@mixin breakpoint-xs() {
+    @media screen and (min-width: $screen-sm) {
+        @content;
+    }
+}
+
+@mixin breakpoint-sm() {
+    @media screen and (min-width: $screen-sm) {
+        @content;
+    }
+}
+
+@mixin breakpoint-md() {
+    @media screen and (min-width: $screen-md) {
+        @content;
+    }
+}
+
+@mixin breakpoint-lg() {
+    @media screen and (min-width: $screen-lg) {
+        @content;
+    }
+}
+
+
+/* Created by Ryan Kimber */
+.formhero-overlay {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5000;
+}
+
+.formhero-iframe-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50000;
+    padding: 20px 20px;
+    transition: all 750ms linear;
+
+    @include breakpoint-xs() {
+    }
+    @include breakpoint-sm() {
+    }
+    @include breakpoint-md() {
+    }
+    @include breakpoint-lg() {
+
+    }
+}
+.formhero-iframe {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow-y: scroll;
+    z-index: 100;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    background-color: transparent;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.formhero-iframe-wrapper div.spinner-container {
+    position: fixed;
+    margin: 20px 20px;
+    background-color: #f0f0f0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    display: table;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    vertical-align: center;
+}
+
+.formhero-iframe-wrapper div.spinner-container svg.circle {
+
+}
+
+.formhero-iframe-wrapper.visible {
+    transform: translateY(0px);
+}
+
+.formhero-iframe-wrapper.hidden {
+    transform: translateY(-2000px);
+}
+
+.formhero-close-button {
+    line-height: 1; /* Things move around if the page has a differnt line height, so force it here for the button. */
+    border: 3px solid white;
+    background: #000;
+    border-radius: 50%;
+    display: table-cell;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    z-index : 50001;
+    color: #f0f0f0;
+    font-size: 24pt;
+    text-align: center;
+    vertical-align: middle;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding-box;
+    background-clip: padding-box;
+}
+
+.formhero-close-button:before {
+    content: '\2716';
+}
+
+.visible,
+.hidden {
+    overflow: hidden;
+    /* This container should not have padding, borders, etc. */
+}
+.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: all 750ms linear;
+}
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: all 750ms linear;
+}
+
+
+/* SVG Spinner Animation */
+.spinner {
+    animation: rotator 1.4s linear infinite;
+}
+
+@keyframes rotator {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(270deg); }
+}
+
+.path {
+    stroke-dasharray: 187;
+    stroke-dashoffset: 0;
+    transform-origin: center;
+    animation:
+            dash 1.4s ease-in-out infinite,
+            colors (5.6s) ease-in-out infinite;
+}
+
+@keyframes colors {
+    0% { stroke: #4285F4; }
+    25% { stroke: #DE3E35; }
+    50% { stroke: #F7C223; }
+    75% { stroke: #1B9A59; }
+    100% { stroke: #4285F4; }
+}
+
+@keyframes dash {
+    0% { stroke-dashoffset: 187; }
+    50% {
+        stroke-dashoffset: 46.75;
+        transform:rotate(135deg);
+    }
+    100% {
+        stroke-dashoffset: 187;
+        transform:rotate(450deg);
+    }
+}
