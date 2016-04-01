@@ -5,6 +5,7 @@ module.exports = function(gulp, plugins, buildProperties)
         return gulp.src([
                 './src/*.js',
                 './src/**/*.js',
+                '!./**/*.min.js'
             ])
             .pipe(plugins.concat('formhero.js'))
             .pipe(gulp.dest(buildProperties.distTarget))
