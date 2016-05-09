@@ -143,8 +143,12 @@ var formhero = (function (api) {
         var formId = options.formId;
         var protocol = 'https://';
 	var formheroHost = 'formhero.io';
+    if(typeof FORMHERO_PROTOCOL != 'undefined')
+    {
+        protocol = FORMHERO_PROTOCOL;
+    }
+
 	if(typeof FORMHERO_HOST != 'undefined') {
-	   protocol = 'http://';
        formheroHost = FORMHERO_HOST;
     }
         var formUrl = [protocol,
