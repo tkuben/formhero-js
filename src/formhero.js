@@ -189,7 +189,7 @@ var formhero = (function (api) {
             iframe.className = 'formhero-iframe';
 
             iframe.id = 'form-frame-' + formCount;
-            iframe.src = formUrl;
+            iframe.src = formUrl + '&mode=modal';
             iframe.frameborder = 0;
             //iframe.scrolling = 'no';
 
