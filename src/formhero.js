@@ -151,15 +151,24 @@ var formhero = (function (api) {
 	if(typeof FORMHERO_HOST != 'undefined') {
        formheroHost = FORMHERO_HOST;
     }
-        var formUrl = [protocol,
-            		encodeURIComponent(options.organizationId),
-            		'.',
+        var modeParam = '';
+
+        if(options.mode)
+        {
+            modeParm = '&mode=' + modeParam;
+        }
+        var formUrl = [
+            protocol,
+            encodeURIComponent(options.organizationId),
+            '.',
 			formheroHost, 
 			'/#/start/', 
-            		encodeURIComponent(options.team), 
-			'/', 
-            		encodeURIComponent(options.formId), 
-			'?new=true'].join('');
+            encodeURIComponent(options.team),
+			'/',
+            encodeURIComponent(options.formId),
+			'?new=true',
+            modeParam
+        ].join('');
 
         if(isMobileSize || isIOS)
         {
@@ -189,7 +198,7 @@ var formhero = (function (api) {
             iframe.className = 'formhero-iframe';
 
             iframe.id = 'form-frame-' + formCount;
-            iframe.src = formUrl + '&mode=modal';
+            iframe.src = formUrl + '&viewMode=modal';
             iframe.frameborder = 0;
             //iframe.scrolling = 'no';
 
