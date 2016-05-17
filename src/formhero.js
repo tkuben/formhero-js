@@ -36,6 +36,7 @@ var formhero = (function (api) {
     var deferClosingToFormHeroUi = false;
     var formCount = 0;
     var modalCloseRequests = {};
+    var closeFunction;
 
     window.addEventListener('message', function(event) {
         console.log("FormHero.js received: ", event);
@@ -57,6 +58,7 @@ var formhero = (function (api) {
                     }
                 }
             }
+            else if(fhMessage.result == 'close' && closeFunction) closeFunction();
 
             if(fhMessage.deferClosing)
             {
@@ -211,20 +213,23 @@ var formhero = (function (api) {
             iframeContainer.appendChild(getSvgContainerElement());
             iframeContainer.appendChild(closeButton);
             iframeContainer.appendChild(iframe);
+
+            var iframeCloseFn = function () {
+                overlay.className = 'formhero-overlay hidden'; //remove hidden
+                iframeContainer.className = 'formhero-iframe-wrapper hidden'; //remove hidden
+                setTimeout(function () {
+                    console.log("Destroying formhero overlay and iframe container...");
+                    document.body.removeChild(overlay);
+                    document.body.removeChild(iframeContainer);
+                    document.body.style.overflow = originalOverflowSetting;
+                }, 2000);
+            };
+            modalCloseRequests[iframe.id] = iframeCloseFn;
+            closeFunction = iframeCloseFn;
+
             closeButton.addEventListener("click", function() {
 
                 if(deferClosingToFormHeroUi) {
-                    //Register a handler in modalCloseRequests
-                    modalCloseRequests[iframe.id] = function () {
-                        overlay.className = 'formhero-overlay hidden'; //remove hidden
-                        iframeContainer.className = 'formhero-iframe-wrapper hidden'; //remove hidden
-                        setTimeout(function () {
-                            console.log("Destroying formhero overlay and iframe container...");
-                            document.body.removeChild(overlay);
-                            document.body.removeChild(iframeContainer);
-                            document.body.style.overflow = originalOverflowSetting;
-                        }, 2000);
-                    };
                     //Send a message to our child frame that the user has asked to close it.
                     _sendMessageToIframe(iframe, {
                         type: 'formhero-js-request',
@@ -232,17 +237,7 @@ var formhero = (function (api) {
                         iframeId: iframe.id
                     });
                 }
-                else
-                {
-                    overlay.className = 'formhero-overlay hidden'; //remove hidden
-                    iframeContainer.className = 'formhero-iframe-wrapper hidden'; //remove hidden
-                    setTimeout(function () {
-                        console.log("Destroying formhero overlay and iframe container...");
-                        document.body.removeChild(overlay);
-                        document.body.removeChild(iframeContainer);
-                        document.body.style.overflow = originalOverflowSetting;
-                    }, 2000);
-                }
+                else iframeCloseFn();
             });
 
             document.body.appendChild(iframeContainer);
