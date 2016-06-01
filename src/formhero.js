@@ -211,6 +211,11 @@ var formhero = (function (api) {
             iframe.allowTransparency="true";
 
             iframeContainer.appendChild(getSvgContainerElement());
+            //Ensure we remove the spinner once the iframe has loaded.
+            iframe.onload = function() {
+                var spinner = document.getElementById('fh-spinner');
+                spinner.parentNode.removeChild(spinner);
+            };
             iframeContainer.appendChild(closeButton);
             iframeContainer.appendChild(iframe);
 
@@ -258,6 +263,7 @@ var formhero = (function (api) {
     function getSvgContainerElement()
     {
         var bodyElement = document.createElement('div');
+        bodyElement.id = 'fh-spinner';
         bodyElement.className = 'spinner-container';
         bodyElement.appendChild(getSvgElement());
         return bodyElement;
