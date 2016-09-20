@@ -87,6 +87,8 @@ $screen-lg: 1200px;
 .formhero-iframe {
     width: 100%;
     height: 100%;
+    height: 95vh;
+    max-height: 95vh;
     position: relative;
     overflow-y: scroll;
     z-index: 100;
