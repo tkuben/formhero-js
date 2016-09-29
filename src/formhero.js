@@ -16,9 +16,9 @@
  * e-mail at info@formhero.io .
  *
  * FormHero Inc.
- * 1077 Regional Road 97
- * Puslinch, ON
- * N0B 2J0
+ * 600 - 10 Dundas Street East c/o DMZ
+ * Toronto, ON
+ * M5G 2B9
  * Canada
  *
  */
@@ -30,6 +30,7 @@
  * 2015-11-15 22:10 - changed styling for modal box.
  * 2015-11-16 09:56 - overlay and iframe fade in.
  * 2016-03-10 21:00 - refactored into it's own project.
+ * 2016-09-28 22:00 - add setFormHeroHost and useHttps methods
  */
 var formhero = (function (api) {
 
@@ -37,6 +38,17 @@ var formhero = (function (api) {
     var formCount = 0;
     var modalCloseRequests = {};
     var closeFunction;
+
+    api.setFormHeroHost = function(host)
+    {
+        FORMHERO_HOST = host;
+    };
+
+    api.useHttps = function(useHttps)
+    {
+        if(useHttps) FORMHERO_PROTOCOL = "https://";
+        else FORMHERO_PROTOCOL = "http://";
+    };
 
     window.addEventListener('message', function(event) {
         console.log("FormHero.js received: ", event);
