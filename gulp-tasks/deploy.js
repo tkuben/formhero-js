@@ -2,8 +2,25 @@ module.exports = function(gulp, plugins, buildProperties)
 {
     var parallelize = require("concurrent-transform");
 
-    gulp.task('deploy:prod', ['build:dist'], function(callback){
+    gulp.task('deploy:prod', ['deploy:setProdPath', 'build:dist'], function(){
         // create a new publisher
+        return doDeploy('latest');
+    });
+
+    gulp.task('deploy:setBetaPath', function(callback) {
+        buildProperties.deployPath = 'beta';
+        buildProperties.hostOverride = 'var FORMHERO_HOST = \'dev.formhero.io\';';
+        callback();
+
+    });
+
+    gulp.task('deploy:setProdPath', function(callback) {
+        buildProperties.deployPath = 'latest';
+        buildProperties.hostOverride = '//Use the default/production host formhero.io';
+        callback();
+    });
+
+    function doDeploy(outputDir) {
 
         console.log("Using: ", buildProperties);
 
@@ -31,17 +48,20 @@ module.exports = function(gulp, plugins, buildProperties)
         };
 
         console.log("...starting upload...");
-        gulp.src([buildProperties.distTarget + '/*'])
+        return gulp.src([buildProperties.distTarget + '/*'])
             .pipe(plugins.rename(function (path) {
-                path.dirname = 'lib/' + path.dirname;
+                path.dirname = '/' + outputDir + '/' + path.dirname;
             }))
             .pipe(plugins.awspublish.gzip())
             .pipe(parallelize(publisher.publish(resourceHeaders), 10))
             .pipe(plugins.awspublish.reporter())
             .on('end', function(){
                 console.log("Done.");
-                callback();
             });
 
-    });
+    }
+
+    gulp.task('deploy:dev', ['deploy:setBetaPath', 'build:dist'], function() {
+        return doDeploy('beta');
+    })
 };
