@@ -139,9 +139,9 @@ var formhero = (function (api) {
                     if(fhMessage.fhResult && fhMessage.fhResult.state === 'form-success')
                     {
                         try {
-                            document.querySelector('div.formhero-button-panel span.fh-button.fa-save').style.display = 'none';
-                            document.querySelector('div.formhero-button-panel span.fh-button.fa-cancel').style.display = 'none';
-                            document.querySelector('div.formhero-button-panel span.fh-button.fa-close').style.display = 'block';
+                            document.querySelector('div.formhero-button-panel span.fh-button.fh-save').style.display = 'none';
+                            document.querySelector('div.formhero-button-panel span.fh-button.fh-cancel').style.display = 'none';
+                            document.querySelector('div.formhero-button-panel span.fh-button.fh-close').style.display = 'block';
                         }
                         catch(e) {}
 
