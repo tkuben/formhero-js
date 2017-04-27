@@ -85,6 +85,12 @@ var formhero = (function (api) {
         }
     }
 
+    function htmlToElement(html) {
+        var template = document.createElement('template');
+        template.innerHTML = html;
+        return template.content.firstChild;
+    }
+
 
     api.convertMapToObject = function(flatData) {
         var objectData = {};
@@ -156,8 +162,8 @@ var formhero = (function (api) {
                     }
                     else if (fhMessage.closeRequestResult == 'close' || fhMessage.result == 'close')
                     {
-                        callbackRegistry[fhMessage.iframeId].closeModal();
-                        callbackRegistry[fhMessage.iframeId].closeHandler();
+                        callbackRegistry[fhMessage.iframeId].closeModal(fhMessage.buttonAction);
+                        callbackRegistry[fhMessage.iframeId].closeHandler(fhMessage.buttonAction);
                         if(callbackRegistry[fhMessage.iframeId].isSettled) {
                             delete callbackRegistry[fhMessage.iframeId];
                         }
@@ -343,7 +349,7 @@ var formhero = (function (api) {
                     function(response) {
                         formUrl += '&jwt=' + response.jwt;
                         console.log("Loading iframe with " + formUrl);
-                        loadForm(formUrl, formFrameIdentifier).then(resolve, reject);
+                        loadForm(formUrl, formFrameIdentifier, options).then(resolve, reject);
                     },
                     function() {
 
@@ -352,12 +358,12 @@ var formhero = (function (api) {
             }
             else {
                 console.log("Loading iframe with " + formUrl);
-                loadForm(formUrl, formFrameIdentifier).then(resolve, reject);
+                loadForm(formUrl, formFrameIdentifier, options).then(resolve, reject);
             }
         });
     };
 
-    function loadForm(formUrl, formFrameIdentifier) {
+    function loadForm(formUrl, formFrameIdentifier, options) {
 
         return new Promise(function(resolve, reject) {
             /*
@@ -409,8 +415,19 @@ var formhero = (function (api) {
                 iframe.src = formUrl + '&viewMode=modal';
                 iframe.frameborder = 0;
 
-                var closeButton = document.createElement('div');
-                closeButton.className = 'formhero-close-button';
+                var cancelButtonMarkup = options.cancelButtonMarkup || '<div class="formhero-cancel-button"><i class="fa fa-cancel"></i>Cancel</div>';
+                var closeButtonMarkup = options.closeButtonMarkup || '<div class="formhero-cancel-button" style="display: none;"><i class="fa fa-close"></i>Close</div>';
+                var saveButtonMarkup = options.saveButtonMarkup || '<div class="formhero-save-button"><i class="fa fa-save"></i>Save &amp; Close</div>';
+
+                var buttonPanelElement = htmlToElement('<div class="formhero-button-panel"></div>');
+                var cancelButtonElement = htmlToElement(cancelButtonMarkup);
+                var closeButtonElement = htmlToElement(closeButtonMarkup);
+                var saveButtonElement = htmlToElement(saveButtonMarkup);
+                buttonPanelElement.appendChild(saveButtonElement);
+                buttonPanelElement.appendChild(cancelButtonElement);
+                buttonPanelElement.appendChild(closeButtonElement);
+
+
 
                 iframe.frameBorder = "0";
                 iframe.allowTransparency = "true";
@@ -421,7 +438,8 @@ var formhero = (function (api) {
                         var spinner = document.getElementById('fh-spinner');
                     spinner.parentNode.removeChild(spinner);
                 };
-                iframeContainer.appendChild(closeButton);
+
+                iframeContainer.appendChild(buttonPanelElement);
                 iframeContainer.appendChild(iframe);
 
 
@@ -440,23 +458,26 @@ var formhero = (function (api) {
                 };
 
 
-
-                closeButton.addEventListener("click", function () {
-
+                var buttonHandler = function(buttonAction) {
                     if(callbackRegistry[formFrameIdentifier].isSettled)
                     {
-                        callbackRegistry[formFrameIdentifier].closeModal();
-                        callbackRegistry[formFrameIdentifier].closeHandler();
+                        callbackRegistry[formFrameIdentifier].closeModal(buttonAction);
+                        callbackRegistry[formFrameIdentifier].closeHandler(buttonAction);
                     }
                     else {
                         //Send a message to our child frame that the user has asked to close it.
                         _sendMessageToIframe(iframe, {
                             type: 'formhero-js-request',
                             request: 'modalClose',
+                            buttonAction: buttonAction,
                             iframeId: formFrameIdentifier
                         });
                     }
-                });
+                }
+
+                closeButtonElement.addEventListener("click", function () { buttonHandler('close-after-submit')});
+                cancelButtonElement.addEventListener("click", function() { buttonHandler('cancel-without-save')});
+                saveButtonElement.addEventListener("click", function() { buttonHandler('close-and-save')});
 
                 document.body.appendChild(iframeContainer);
                 formCount++;

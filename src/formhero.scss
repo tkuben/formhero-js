@@ -143,6 +143,32 @@ body.formhero-scroll-block
 
 }
 
+div.formhero-button-panel {
+    position: fixed;
+    right: 30px;
+    top: 30px;
+    z-index: 50000;
+
+    div.formhero-close-button,
+    div.formhero-save-button,
+    div.formhero-cancel-button {
+        display: inline-block;
+        margin: 10px 10px;
+        padding: 5px 5px;
+        background-color: #6c6c6c;
+        border: 1px solid #222222;
+        border-radius: 5px 5px;
+        color: white;
+        cursor: pointer;
+        -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+        -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+        -webkit-background-clip: padding-box;
+        -moz-background-clip: padding-box;
+        background-clip: padding-box;
+    }
+}
+
 .formhero-close-button {
     line-height: 1; /* Things move around if the page has a differnt line height, so force it here for the button. */
     border: 3px solid white;
