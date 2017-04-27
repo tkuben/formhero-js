@@ -149,15 +149,17 @@ div.formhero-button-panel {
     top: 30px;
     z-index: 50000;
 
+
+
     div.formhero-close-button,
     div.formhero-save-button,
     div.formhero-cancel-button {
         display: inline-block;
         margin: 10px 10px;
         padding: 5px 5px;
-        background-color: #6c6c6c;
-        border: 1px solid #222222;
-        border-radius: 5px 5px;
+        background-color: #064418;
+        border: 1px solid #022205;
+        border-radius: 3px 3px;
         color: white;
         cursor: pointer;
         -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
@@ -166,6 +168,10 @@ div.formhero-button-panel {
         -webkit-background-clip: padding-box;
         -moz-background-clip: padding-box;
         background-clip: padding-box;
+
+        i.fa {
+            padding-right: 5px;
+        }
     }
 }
 

@@ -138,6 +138,13 @@ var formhero = (function (api) {
                     callbackRegistry[fhMessage.iframeId].isSettled = true;
                     if(fhMessage.fhResult && fhMessage.fhResult.state === 'form-success')
                     {
+                        try {
+                            document.querySelector('div.formhero-button-panel span.fh-button.fa-save').style.display = 'none';
+                            document.querySelector('div.formhero-button-panel span.fh-button.fa-cancel').style.display = 'none';
+                            document.querySelector('div.formhero-button-panel span.fh-button.fa-close').style.display = 'block';
+                        }
+                        catch(e) {}
+
                         fhMessage.fhResult.submittedAt = JSON.stringify(new Date());
                         fhMessage.fhResult.outputFiles = [
                             {
@@ -415,14 +422,14 @@ var formhero = (function (api) {
                 iframe.src = formUrl + '&viewMode=modal';
                 iframe.frameborder = 0;
 
-                var cancelButtonMarkup = options.cancelButtonMarkup || '<div class="formhero-cancel-button"><i class="fa fa-cancel"></i>Cancel</div>';
-                var closeButtonMarkup = options.closeButtonMarkup || '<div class="formhero-cancel-button" style="display: none;"><i class="fa fa-close"></i>Close</div>';
+                var cancelButtonMarkup = options.cancelButtonMarkup || '<div class="formhero-cancel-button"><i class="fa fa-trash-o"></i>Cancel</div>';
+                var closeButtonMarkup = options.closeButtonMarkup || '<div class="formhero-cancel-button"><i class="fa fa-close"></i>Close</div>';
                 var saveButtonMarkup = options.saveButtonMarkup || '<div class="formhero-save-button"><i class="fa fa-save"></i>Save &amp; Close</div>';
 
                 var buttonPanelElement = htmlToElement('<div class="formhero-button-panel"></div>');
-                var cancelButtonElement = htmlToElement(cancelButtonMarkup);
-                var closeButtonElement = htmlToElement(closeButtonMarkup);
-                var saveButtonElement = htmlToElement(saveButtonMarkup);
+                var cancelButtonElement = htmlToElement('<span class="fh-button fh-cancel">' + cancelButtonMarkup + '</span>');
+                var closeButtonElement = htmlToElement('<span class="fh-button fh-close" style="display:none;">' + closeButtonMarkup + '</span>');
+                var saveButtonElement = htmlToElement('<span class="fh-button fh-save">' + saveButtonMarkup + '</span>');
                 buttonPanelElement.appendChild(saveButtonElement);
                 buttonPanelElement.appendChild(cancelButtonElement);
                 buttonPanelElement.appendChild(closeButtonElement);
