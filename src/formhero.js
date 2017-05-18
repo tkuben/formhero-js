@@ -85,7 +85,7 @@ var formhero = (function (api) {
         }
     }
 
-    function htmlToElement(html) {
+    function htmlToElement(html) {3
         var template = document.createElement('template');
         template.innerHTML = html;
         return template.content.firstChild;
@@ -95,10 +95,13 @@ var formhero = (function (api) {
     api.convertMapToObject = function(flatData) {
         var objectData = {};
 
+
         for(var propertyName in flatData) {
             // propertyName is what you want
             // you can get the value like this: myObject[propertyName]
-            flatMapper(objectData, { key: propertyName, value: flatData[propertyName]});
+            if(propertyName && propertyName.indexOf('$') == -1) {
+                flatMapper(objectData, {key: propertyName, value: flatData[propertyName]});
+            }
         }
         return objectData;
     };
@@ -146,12 +149,6 @@ var formhero = (function (api) {
                         catch(e) {}
 
                         fhMessage.fhResult.submittedAt = JSON.stringify(new Date());
-                        fhMessage.fhResult.outputFiles = [
-                            {
-                                'title': 'blankit-pdf-placeholder',
-                                'url': 'http://static.formhero.io/blankit/blankit-placeholder.pdf'
-                            }
-                        ];
                         callbackRegistry[fhMessage.iframeId]['onFormSuccess'](fhMessage.fhResult);
                     }
                     else {
