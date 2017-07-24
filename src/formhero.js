@@ -331,7 +331,7 @@ var formhero = (function (api) {
             var formUrl = [
                 protocol,
                 formheroHost,
-                '/#/start/',
+                '/#/',
                 encodeURIComponent(options.team),
                 '/',
                 encodeURIComponent(options.form),
