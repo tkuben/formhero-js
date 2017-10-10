@@ -213,7 +213,7 @@ var formhero = (function (api) {
                 org: options.organization,
                 team: options.team,
                 slug: options.form,
-                fieldData: dataMap,
+                prepopulatedData: dataMap,
                 cname: options.cname
             }));
         });
