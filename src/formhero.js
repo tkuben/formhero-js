@@ -214,6 +214,7 @@ var formhero = (function (api) {
                 team: options.team,
                 slug: options.form,
                 prepopulatedData: dataMap,
+                fieldData: dataMap,   //This one needs to come out once the formhero-ui is using prepopulatedData
                 cname: options.cname
             }));
         });
