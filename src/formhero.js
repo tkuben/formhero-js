@@ -370,128 +370,149 @@ var formhero = (function (api) {
     function loadForm(formUrl, formFrameIdentifier, options) {
 
         return new Promise(function(resolve, reject) {
-            /*
+
+            switch(options.viewMode)
+            {
+
+                case 'page':
+                case 'window':
+                    loadFormInPage(formUrl, options);
+                    break;
+                default:
+                    loadFormInModal(formUrl, formFrameIdentifier, options);
+                    break;
+            }
+        });
+    }
+
+    function loadFormInPage(formUrl, options)
+    {
+        document.location = formUrl;
+    }
+
+    function loadFormInModal(formUrl, formFrameIdentifier, options)
+    {
+        /*
              FORMHERO-191
              Two things to check.
              1) If the screen is small, just use a new tab because it's easier and we can be sure of the user experience
              2) If it's iOS, use a new tab regardless, as, as of iOS 9, iOS iframe's don't scroll and aren't responsive.
              They actually scale the viewport to include 100% of the content without scrolling.
              */
-            //var isMobileSize = window.matchMedia("only screen and (max-width: 760px)").matches;
+        //var isMobileSize = window.matchMedia("only screen and (max-width: 760px)").matches;
 
-            formUrl += '&iframeId=' + formFrameIdentifier;
+        formUrl += '&iframeId=' + formFrameIdentifier;
 
-            //If we treat iOS / small devices differently here, we will break our messaging system. It's much
-            //harder for us to message cross-domain if we don't have iframes involved.
+        //If we treat iOS / small devices differently here, we will break our messaging system. It's much
+        //harder for us to message cross-domain if we don't have iframes involved.
 
-            //var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            //if (isMobileSize || isIOS) {
-                //Open in a new tab
-            //    window.open(formUrl, "_blank");
-           ///}
-            if(true) { //else {
-                var scrollTop = document.body.scrollTop;
-                document.body.classList.add('formhero-scroll-block');
+        //var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        //if (isMobileSize || isIOS) {
+        //Open in a new tab
+        //    window.open(formUrl, "_blank");
+        ///}
+        if(true) { //else {
+            var scrollTop = document.body.scrollTop;
+            document.body.classList.add('formhero-scroll-block');
 
-                var overlay = document.createElement('div');
-                overlay.id = 'formhero-overlay-' + formCount;
-                overlay.className = 'formhero-overlay hidden';
+            var overlay = document.createElement('div');
+            overlay.id = 'formhero-overlay-' + formCount;
+            overlay.className = 'formhero-overlay hidden';
 
-                document.body.appendChild(overlay);
+            document.body.appendChild(overlay);
 
-                                // var originalHtmlOverflowSetting = document.documentElement.style.overflow;
-                // var originalBodyOverflowSetting = document.body.style.overflow;
-                //
-                // document.documentElement.style.overflow = 'hidden';
-                // document.body.style.overflow = 'hidden';
-
-
-                var iframeContainer = document.createElement('div');
-
-                iframeContainer.id = 'formhero-iframe-wrapper-' + formCount;
-                iframeContainer.className = 'formhero-iframe-wrapper hidden';
-
-                var iframe = document.createElement('iframe');
-                iframe.className = 'formhero-iframe';
-
-                iframe.id = 'form-frame-' + formCount;
-                iframe.name = 'form-frame-' + formCount;
-                iframe.src = formUrl + '&viewMode=modal';
-                iframe.frameborder = 0;
-
-                var cancelButtonMarkup = options.cancelButtonMarkup || '<div class="formhero-cancel-button"><i class="fa fa-trash-o"></i>Cancel</div>';
-                var closeButtonMarkup = options.closeButtonMarkup || '<div class="formhero-cancel-button"><i class="fa fa-close"></i>Close</div>';
-                var saveButtonMarkup = options.saveButtonMarkup || '<div class="formhero-save-button"><i class="fa fa-save"></i>Save &amp; Close</div>';
-
-                var buttonPanelElement = htmlToElement('<div class="formhero-button-panel"></div>');
-                var cancelButtonElement = htmlToElement('<span class="fh-button fh-cancel">' + cancelButtonMarkup + '</span>');
-                var closeButtonElement = htmlToElement('<span class="fh-button fh-close" style="display:none;">' + closeButtonMarkup + '</span>');
-                var saveButtonElement = htmlToElement('<span class="fh-button fh-save">' + saveButtonMarkup + '</span>');
-                buttonPanelElement.appendChild(saveButtonElement);
-                buttonPanelElement.appendChild(cancelButtonElement);
-                buttonPanelElement.appendChild(closeButtonElement);
+            // var originalHtmlOverflowSetting = document.documentElement.style.overflow;
+            // var originalBodyOverflowSetting = document.body.style.overflow;
+            //
+            // document.documentElement.style.overflow = 'hidden';
+            // document.body.style.overflow = 'hidden';
 
 
+            var iframeContainer = document.createElement('div');
 
-                iframe.frameBorder = "0";
-                iframe.allowTransparency = "true";
+            iframeContainer.id = 'formhero-iframe-wrapper-' + formCount;
+            iframeContainer.className = 'formhero-iframe-wrapper hidden';
 
-                iframeContainer.appendChild(getSvgContainerElement());
-                //Ensure we remove the spinner once the iframe has loaded.
-                iframe.onload = function () {
-                        var spinner = document.getElementById('fh-spinner');
-                    spinner.parentNode.removeChild(spinner);
-                };
+            var iframe = document.createElement('iframe');
+            iframe.className = 'formhero-iframe';
 
-                iframeContainer.appendChild(buttonPanelElement);
-                iframeContainer.appendChild(iframe);
+            iframe.id = 'form-frame-' + formCount;
+            iframe.name = 'form-frame-' + formCount;
+            iframe.src = formUrl + '&viewMode=modal';
+            iframe.frameborder = 0;
+
+            var cancelButtonMarkup = options.cancelButtonMarkup || '<div class="formhero-cancel-button"><i class="fa fa-trash-o"></i>Cancel</div>';
+            var closeButtonMarkup = options.closeButtonMarkup || '<div class="formhero-cancel-button"><i class="fa fa-close"></i>Close</div>';
+            var saveButtonMarkup = options.saveButtonMarkup || '<div class="formhero-save-button"><i class="fa fa-save"></i>Save &amp; Close</div>';
+
+            var buttonPanelElement = htmlToElement('<div class="formhero-button-panel"></div>');
+            var cancelButtonElement = htmlToElement('<span class="fh-button fh-cancel">' + cancelButtonMarkup + '</span>');
+            var closeButtonElement = htmlToElement('<span class="fh-button fh-close" style="display:none;">' + closeButtonMarkup + '</span>');
+            var saveButtonElement = htmlToElement('<span class="fh-button fh-save">' + saveButtonMarkup + '</span>');
+            buttonPanelElement.appendChild(saveButtonElement);
+            buttonPanelElement.appendChild(cancelButtonElement);
+            buttonPanelElement.appendChild(closeButtonElement);
 
 
 
-                callbackRegistry[formFrameIdentifier].closeModal = function () {
-                    overlay.className = 'formhero-overlay hidden'; //remove hidden
-                    iframeContainer.className = 'formhero-iframe-wrapper hidden'; //remove hidden
-                    setTimeout(function () {
-                        document.body.removeChild(overlay);
-                        document.body.removeChild(iframeContainer);
-                        if(document.body.classList.contains('formhero-scroll-block')) document.body.classList.remove('formhero-scroll-block');
-                        document.body.scrollTop = scrollTop;
-                        //document.documentElement.style.overflow = originalHtmlOverflowSetting;
-                        //document.body.style.overflow = originalBodyOverflowSetting;
-                    }, 100);
-                };
+            iframe.frameBorder = "0";
+            iframe.allowTransparency = "true";
+
+            iframeContainer.appendChild(getSvgContainerElement());
+            //Ensure we remove the spinner once the iframe has loaded.
+            iframe.onload = function () {
+                var spinner = document.getElementById('fh-spinner');
+                spinner.parentNode.removeChild(spinner);
+            };
+
+            iframeContainer.appendChild(buttonPanelElement);
+            iframeContainer.appendChild(iframe);
 
 
-                var buttonHandler = function(buttonAction) {
-                    if(callbackRegistry[formFrameIdentifier].isSettled)
-                    {
-                        callbackRegistry[formFrameIdentifier].closeModal(buttonAction);
-                        callbackRegistry[formFrameIdentifier].closeHandler(buttonAction);
-                    }
-                    else {
-                        //Send a message to our child frame that the user has asked to close it.
-                        _sendMessageToIframe(iframe, {
-                            type: 'formhero-js-request',
-                            request: 'modalClose',
-                            buttonAction: buttonAction,
-                            iframeId: formFrameIdentifier
-                        });
-                    }
-                }
 
-                closeButtonElement.addEventListener("click", function () { buttonHandler('close-after-submit')});
-                cancelButtonElement.addEventListener("click", function() { buttonHandler('cancel-without-save')});
-                saveButtonElement.addEventListener("click", function() { buttonHandler('close-and-save')});
-
-                document.body.appendChild(iframeContainer);
-                formCount++;
-
+            callbackRegistry[formFrameIdentifier].closeModal = function () {
+                overlay.className = 'formhero-overlay hidden'; //remove hidden
+                iframeContainer.className = 'formhero-iframe-wrapper hidden'; //remove hidden
                 setTimeout(function () {
-                    overlay.className = 'formhero-overlay visible'; //remove hidden
-                    iframeContainer.className = 'formhero-iframe-wrapper visible'; //remove hidden
+                    document.body.removeChild(overlay);
+                    document.body.removeChild(iframeContainer);
+                    if(document.body.classList.contains('formhero-scroll-block')) document.body.classList.remove('formhero-scroll-block');
+                    document.body.scrollTop = scrollTop;
+                    //document.documentElement.style.overflow = originalHtmlOverflowSetting;
+                    //document.body.style.overflow = originalBodyOverflowSetting;
                 }, 100);
+            };
+
+
+            var buttonHandler = function(buttonAction) {
+                if(callbackRegistry[formFrameIdentifier].isSettled)
+                {
+                    callbackRegistry[formFrameIdentifier].closeModal(buttonAction);
+                    callbackRegistry[formFrameIdentifier].closeHandler(buttonAction);
+                }
+                else {
+                    //Send a message to our child frame that the user has asked to close it.
+                    _sendMessageToIframe(iframe, {
+                        type: 'formhero-js-request',
+                        request: 'modalClose',
+                        buttonAction: buttonAction,
+                        iframeId: formFrameIdentifier
+                    });
+                }
             }
-        })
+
+            closeButtonElement.addEventListener("click", function () { buttonHandler('close-after-submit')});
+            cancelButtonElement.addEventListener("click", function() { buttonHandler('cancel-without-save')});
+            saveButtonElement.addEventListener("click", function() { buttonHandler('close-and-save')});
+
+            document.body.appendChild(iframeContainer);
+            formCount++;
+
+            setTimeout(function () {
+                overlay.className = 'formhero-overlay visible'; //remove hidden
+                iframeContainer.className = 'formhero-iframe-wrapper visible'; //remove hidden
+            }, 100);
+        }
     }
 
     function _sendMessageToIframe(iframe, message)
