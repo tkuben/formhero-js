@@ -572,7 +572,7 @@ var formhero = (function (api) {
                         team: formTarget.getAttribute('fh-team'),
                         form: formTarget.getAttribute('fh-form'),
                         viewMode: formTarget.getAttribute('fh-view-mode') || 'modal',
-                        saveButtonMarkup: ''
+                        saveButtonMarkup: '<div style="display: none;"></div>'
                     });
                     return false;
                 });
