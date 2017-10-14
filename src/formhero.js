@@ -118,12 +118,6 @@ var formhero = (function (api) {
     };
 
     window.addEventListener('message', function(event) {
-        console.log("FormHero.js received: ", event);
-
-            // closeHandler: closeHandlerFn || function() {},
-            // onFormSuccess: resolve,
-            // onFormCancel: reject,
-            // isSettled: false
 
         try {
             //We expect JSON, and we expect a frame ID in the message.
@@ -156,13 +150,20 @@ var formhero = (function (api) {
                     }
                 }
             }
+            else if(fhMessage.fhStatus)
+            {
+                //This is an update on the current state of the smart form.
+                console.log("FhStatus message received from the Smart Form: ", fhMessage);
+                callbackRegistry[fhMessage.iframeId]['onUpdate'](fhMessage.fhResult);
+            }
+
             //Notification specifically about closing the dialog
             if(fhMessage.iframeId && (fhMessage.closeRequestResult || fhMessage.result))
             {
                 if(callbackRegistry[fhMessage.iframeId]) {
                     if(fhMessage.closeRequestResult == 'cancel')
                     {
-                        console.log("The user cancelled their close request...");
+                        //console.log("The user cancelled their close request...");
                     }
                     else if (fhMessage.closeRequestResult == 'close' || fhMessage.result == 'close')
                     {
@@ -280,9 +281,10 @@ var formhero = (function (api) {
      *           path: array of objects indicating the user's path through the formflow, each of which includes the uuid and label of the nodes on the path
      *        }
      */
-    api.loadForm = function(options, dataMap, onCloseFn) {
+    api.loadForm = function(options, dataMap, onCloseFn, onUpdateFn) {
 
         var closeHandlerFn = onCloseFn || options.onCloseFn;
+        var onUpdateHandlerFn = onUpdateFn || options.onUpdateFn;
 
         return new Promise(function(resolve, reject) {
             /* if the user calls us with a data map, we create a session on the server, grab the JWT token and then ensure the
@@ -299,7 +301,7 @@ var formhero = (function (api) {
 
             if(typeof options === 'undefined' || typeof options.form === 'undefined' || typeof options.organization === 'undefined')
             {
-                console.error("You must pass an options object with an organization  and a form when calling formHero.");
+                console.error("You must pass an options object with an organization and a form when calling formHero.");
                 return;
             }
 
@@ -345,6 +347,7 @@ var formhero = (function (api) {
                 closeHandler: closeHandlerFn || function() {},
                 onFormSuccess: resolve,
                 onFormCancel: reject,
+                onUpdate: onUpdateHandlerFn || function() {},
                 isSettled: false
             };
 
@@ -353,7 +356,7 @@ var formhero = (function (api) {
                 createSession(options, dataMap).then(
                     function(response) {
                         formUrl += '&jwt=' + response.jwt;
-                        console.log("Loading iframe with " + formUrl);
+                        //console.log("Loading iframe with " + formUrl);
                         loadForm(formUrl, formFrameIdentifier, options).then(resolve, reject);
                     },
                     function() {
@@ -362,7 +365,7 @@ var formhero = (function (api) {
                 );
             }
             else {
-                console.log("Loading iframe with " + formUrl);
+                //console.log("Loading iframe with " + formUrl);
                 loadForm(formUrl, formFrameIdentifier, options).then(resolve, reject);
             }
         });
@@ -567,7 +570,8 @@ var formhero = (function (api) {
                     api.loadForm({
                        organization: formTarget.getAttribute('fh-organization') || formTarget.getAttribute('fh-org'),
                        team: formTarget.getAttribute('fh-team'),
-                       form: formTarget.getAttribute('fh-form')
+                       form: formTarget.getAttribute('fh-form'),
+                       viewMode: formTarget.getAttribute('fh-view-mode') || 'modal'
                     });
                     return false;
                 });
