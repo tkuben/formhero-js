@@ -572,7 +572,9 @@ var formhero = (function (api) {
                         team: formTarget.getAttribute('fh-team'),
                         form: formTarget.getAttribute('fh-form'),
                         viewMode: formTarget.getAttribute('fh-view-mode') || 'modal',
-                        saveButtonMarkup: '<div style="display: none;"></div>'
+                        saveButtonMarkup: '<div style="display: none;"></div>',
+                        cancelButtonMarkup: '<div style="cursor: pointer;background-color: black; color: white; border: 3px solid white; border-radius: 50%; padding: 4px 8px 5px 8px;text-align: center;layout: table-cell; font-size: 22px;">&times;</div>',
+                        closeButtonMarkup:  '<div style="cursor: pointer;background-color: black; color: white; border: 3px solid white; border-radius: 50%; padding: 4px 8px 5px 8px;text-align: center;layout: table-cell; font-size: 22px;">&times;</div>'
                     });
                     return false;
                 });
