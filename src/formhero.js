@@ -118,12 +118,6 @@ var formhero = (function (api) {
     };
 
     window.addEventListener('message', function(event) {
-        console.log("FormHero.js received: ", event);
-
-            // closeHandler: closeHandlerFn || function() {},
-            // onFormSuccess: resolve,
-            // onFormCancel: reject,
-            // isSettled: false
 
         try {
             //We expect JSON, and we expect a frame ID in the message.
@@ -169,7 +163,7 @@ var formhero = (function (api) {
                 if(callbackRegistry[fhMessage.iframeId]) {
                     if(fhMessage.closeRequestResult == 'cancel')
                     {
-                        console.log("The user cancelled their close request...");
+                        //console.log("The user cancelled their close request...");
                     }
                     else if (fhMessage.closeRequestResult == 'close' || fhMessage.result == 'close')
                     {
@@ -307,7 +301,7 @@ var formhero = (function (api) {
 
             if(typeof options === 'undefined' || typeof options.form === 'undefined' || typeof options.organization === 'undefined')
             {
-                console.error("You must pass an options object with an organization  and a form when calling formHero.");
+                console.error("You must pass an options object with an organization and a form when calling formHero.");
                 return;
             }
 
@@ -362,7 +356,7 @@ var formhero = (function (api) {
                 createSession(options, dataMap).then(
                     function(response) {
                         formUrl += '&jwt=' + response.jwt;
-                        console.log("Loading iframe with " + formUrl);
+                        //console.log("Loading iframe with " + formUrl);
                         loadForm(formUrl, formFrameIdentifier, options).then(resolve, reject);
                     },
                     function() {
@@ -371,7 +365,7 @@ var formhero = (function (api) {
                 );
             }
             else {
-                console.log("Loading iframe with " + formUrl);
+                //console.log("Loading iframe with " + formUrl);
                 loadForm(formUrl, formFrameIdentifier, options).then(resolve, reject);
             }
         });
@@ -576,7 +570,8 @@ var formhero = (function (api) {
                     api.loadForm({
                        organization: formTarget.getAttribute('fh-organization') || formTarget.getAttribute('fh-org'),
                        team: formTarget.getAttribute('fh-team'),
-                       form: formTarget.getAttribute('fh-form')
+                       form: formTarget.getAttribute('fh-form'),
+                       viewMode: formTarget.getAttribute('fh-view-mode') || 'modal'
                     });
                     return false;
                 });
