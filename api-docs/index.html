@@ -1,0 +1,263 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>formhero.js Reference</title>
+
+    <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print"/>
+    <link href="stylesheets/formheroapi.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <script src="javascripts/lib/jquery.1.11.0.min.js"></script>
+    <script src="javascripts/all.js" type="text/javascript"></script>
+    <script src="javascripts/lib/run_prettify.js?skin=sons-of-obsidian"></script>
+</head>
+
+<body class="index">
+
+<a href="#" id="nav-button">
+      <span>
+        <img src="images/navbar.png"/>
+      </span>
+</a>
+<div class="tocify-wrapper">
+    <div class="logo menu">
+        <img src="images/formhero-white-logo.png" width="180"/>
+    </div>
+    <div class="search">
+        <input type="text" class="search" id="input-search" placeholder="Search">
+    </div>
+    <ul class="search-results"></ul>
+    <div id="toc">
+    </div>
+    <ul class="toc-footer">
+        <li>&copy; FormHero Inc.</li>
+    </ul>
+</div>
+<div class="page-wrapper">
+    <div id="header">
+        <div class="logo">
+            <img src="images/formhero-white-logo.png" class="logo-formhero" height="31">
+        </div>
+
+        <a href="https://formhero.io" target="_blank">FormHero &rarr;</a>
+    </div>
+    <div class="dark-box"></div>
+    <div class="content">
+        <h1 id="introduction">Introduction</h1>
+
+        <p>Welcome to the formhero.js API reference section! The following is a living document meant to describe the
+            functionality and usage of the library to launch smart forms and process completed data..</p>
+        <p>If you require additional assistance, please <a href="mailto:info@formhero.io">contact us</a>. Enjoy.</p>
+
+
+        <h1 id="embedding">Embedding</h1>
+        <h2 id="embedding_urls">Embedding the formhero.js library</h2>
+        <blockquote><p>Example Script Tag:</p>
+        </blockquote>
+        <pre class="noescape prettyprint lang-lua">&lt;script src="https://use.formhero.io/latest/formhero.js" type="text/javascript"&gt;</script></pre>
+        <h3>Notes</h3>
+        <p>Including the formhero.js library in your application or webpage is as easy as adding a single <b>script</b>
+            tag to your HTML. The tag can be included in the head section, or just before the closing body
+            tag.<br><br><b>Note:</b><br>Please source the file from our URL versus downloading the file and including it
+            in your own web resources. This will ensure you include critical bug fixes without having to make changes to
+            your site/service.</p>
+        <h3>Links:</h3>
+        <p>
+        <ul>
+            <li><strong>Stable/Production Release:</strong> <a href="https://use.formhero.io/latest/formhero.js">https://use.formhero.io/latest/formhero.js</a>
+            </li>
+            <li><strong>Beta/Upcoming Release:</strong> <a href="https://use.formhero.io/beta/formhero.js">https://use.formhero.io/beta/formhero.js</a>
+            </li>
+        </ul>
+        </p>
+        <h1 id="Launching">Launching</h1>
+        <h2 id="launching_simple">Launching: Simple HTML</h2>
+        <blockquote><p>Example Usage of <b>Simple HTML Launching (No custom JavaScript required)</b></p>
+        </blockquote>
+        <pre class="noescape prettyprint lang-lua">// Example form url:  https://fh.formhero.io/demos/my-form-name/
+
+&lt;a fh-form="my-form-name" fh-organization="fh" fh-team="demos"&gt;Launch Sample Form fh-view-mode="modal|page"&lt;/a&gt;</pre>
+        <h3>Instructions</h3>
+        <p>If you are comfortable making HTML changes, only need basic integration, and don’t want to write any
+            JavaScript, you can just add some custom HTML attributes to anchor (&lt;a&gt;) or button (&lt;button&gt;)
+            tags in your page. <br><br>
+            In this use case, you must add the following attributes to HTML elements you would like to use to initiate
+            for FormHero form/workflow:
+        </p>
+        <h3>Required Parameters</h3>
+        <p>
+        <ul>
+            <li><strong>fh-form:</strong> The FormHero ID for the particular form you are trying to launch. By default
+                this is a ‘slugified’ version of the form title (example: Title “New Sign Up Form” would have ID
+                “new-sign-up-form”)
+                <u>string</u>.
+            </li>
+            <li><strong>fh-organization:</strong> The FormHero ID for your company or organization. This is typically
+                the first part of the URL for your FormHero repository (example: https://&lt;organizationId&gt;.formhero.io).
+                <u>string</u>.
+            </li>
+            <li><strong>fh-team:</strong> The ID of the FormHero team/workgroup that owns this form (example 'default')
+                <u>string</u>.
+            </li>
+        </ul>
+        </p>
+        <h3>Optional Parameters</h3>
+        <p>
+        <ul>
+            <li><strong>fh-view-mode:</strong> 'page' || 'modal' Default: 'modal'. <br>Tells FormHero how to launch this
+                form, either replacing the current window's document (page) or in a modal window.
+            </li>
+        </ul>
+        </p>
+        <h3>Codepen Example</h3>
+        <p>
+        <ul>
+            <li><a href="https://codepen.io/formhero/pen/oGPKBN?editors=1100" target="_blank">Try it out</a>
+            </li>
+        </ul>
+        </p>
+        <h2 id="launching_complete">Launching: Complete</h2>
+        <blockquote><p>Example Usage of <b>Complete Launching</b></p>
+        </blockquote>
+        <pre class="noescape prettyprint lang-lua">formhero.loadForm({
+  form:"my-form-name",
+  organization: "fh",
+  team: "demos" 
+}, 
+{ /* Map of data to pass into form */
+  "customer.firstName": "Daniel",
+  "customer.lastName": "Radcliffe"
+}, 
+  function() { 
+    /* Called when the Smart Form window is closed */
+    console.log("The user closed the modal!");
+})
+.then(
+  function(successResult) {
+    // The successResult object contains the data that was collected.
+    // Use this object and space to process the data via your services.
+    console.log("Form Success:", successResult);
+  },
+  function(cancelledResult){
+    // The cancelledResult object contains the data that was collected.
+    // Use this object and space to persist a session.
+    console.log("Form Cancelled:", cancelledResult);
+  }
+).catch(function(exceptionResult) {
+  /* Called if an error occurs loading the form */
+  console.log("Exception:", exceptionResult);
+});
+</pre>
+        <blockquote><p>Example Result <b>Success</b></p>
+        </blockquote>
+        <pre class="noescape prettyprint lang-lua">
+successResult: { } // An object containing
+  collectedData: { } // An object containing
+    FORMHERO_SESSION_ID: "3e51f974-1175-43c4-b829-e12bb89d065b"
+    customer.firstName: "Daniel"
+    customer.firstName: "Radcliffe"
+    customer.school: "Hogwarts"
+  outputFiles: [ ] // An array containing
+    0: { } // An object containing
+      mimetype: "application/pdf"
+      sessionId: "3e51f974-1175-43c4-b829-e12bb89d065b"
+      url: "https://services.fh.formhero.io/.../c234gsdf43434/unsigned.pdf"
+  state:"form-success"
+  submittedAt: "2017-01-01T11:11:11.111Z"
+</pre>
+        <blockquote><p>Example Result <b>Reject</b></p>
+        </blockquote>
+        <pre class="noescape prettyprint lang-lua">
+canceledResult: { } // An object containing
+  buttonAction: "cancel-without-save"
+  collectedData: { } // An object containing
+    FORMHERO_SESSION_ID: "3e51f974-1175-43c4-b829-e12bb89d065b"
+    customer.firstName: "Daniel"
+    customer.firstName: "Radcliffe"
+  formError: null
+  state:"form-saved-but-incomplete"
+</pre>
+        <h3>Usage</h3>
+        <p><code>formhero.loadForm(options, &lt;dataMap&gt;, &lt;onCloseCallback&gt;)</code>
+        <h3>Instructions</h3>
+        <p>You may also call FormHero from within your own JavaScript code. This method provides the most functionality
+            to your web development team, including complete control over the collected data and notification about when
+            a form is completed, abandoned, or when there are unexpected errors.</p>
+        <h3>Required Parameters</h3>
+        <p>
+        <ul>
+            <li><strong>options:</strong> object with team, form, organization properties that match the teamId, formId
+                and organizationId in FormHero. <u>object</u>.
+            </li>
+        </ul>
+        </p>
+        <h3>Optional Parameters</h3>
+        <p>
+        <ul>
+            <li><strong>dataMap:</strong> optional map of key/value pairs that will be used to pre-populate the form.
+                Fields not used in the form will still be transmitted when the form is submitted, and can be used to
+                drive branch choices, populate PDF fields, etc. <u>object</u>.
+            </li>
+            <li><strong>onCloseCallback:</strong> function to be called immediately upon form close. <u>function</u>.
+            </li>
+        </ul>
+        </p>
+        <h3>Returns</h3>
+        <p>
+        <ul>
+            <li><strong>collectedData:</strong> a map of field-binding/value pairs <u>object</u>.</li>
+            <li><strong>outputFiles:</strong> array of { title, mimetype, sessionId, url } objects that can be retrieved
+                from the server. These obects are only available for a limited time (default: 10 minutes). <u>array</u>.
+            </li>
+            <li><strong>state:</strong> can be 'form-success', 'form-saved-but-incomplete' or 'untouched'. <u>string</u>.
+            </li>
+            <li><strong>buttonAction:</strong> (on cancel)can be 'cancel-without-save' or 'close-and-save'.
+                <u>string</u>.
+            </li>
+            <li><strong>submittedAt:</strong> (on success) UTC timestamp for when the transaction completed.
+                <u>string</u>.
+            </li>
+        </ul>
+        </p>
+        <h3>Codepen Example</h3>
+        <p>
+        <ul>
+            <li><a href="https://codepen.io/artharrison/pen/oWKqwM/left?editors=1111" target="_blank">Try it out</a>
+            </li>
+        </ul>
+        </p>
+        <h1 id="retrieving">Retrieving </h1>
+        <h2 id="retrieving_documents">Retrieving Documents</h2>
+        <p>The result object returned to your resolve function will contain a ‘collectedData’ field, which is a map of
+            the field-name / value pairs resulting from the user’s submission of the document.<br><br>
+            This object will also contain a stringified ‘submittedAt’ timestamp, and an ‘outputFiles’ array object. When
+            documents are signed or generated as a part of the output, this array will contain objects in the following
+            format:
+        </p>
+        <p>
+        <ul>
+            <li><strong>mimetype:</strong> The type of file (application/pdf, text/html, etc) <u>string</u>.</li>
+            <li><strong>sessionId:</strong> The FormHero Session ID, needed as ‘x-formhero-session-id’ in HTTP header to
+                retrieve the document <u>string</u>.
+            </li>
+            <li><strong>title:</strong> the generated title of the document (if available) <u>string</u>.</li>
+            <li><strong>url:</strong> a URL that can be used to retrieve the document <u>string</u>.</li>
+        </ul>
+        </p>
+        <p>
+            Note that generated documents are only available for a limited window of time (10 minutes) and session ID
+            value must be provided in the HTTP Header in the HTTP call made to retrieve the document. So, set an HTTP
+            Header named ‘x-formhero-session-id’ to the sessionId value returned in the outputFile object you are trying
+            to retrieve.
+        </p>
+
+
+    </div>
+    <div class="dark-box">
+    </div>
+</div>
+</body>
+</html>

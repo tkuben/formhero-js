@@ -568,10 +568,11 @@ var formhero = (function (api) {
 
                     if(event.preventDefault) event.preventDefault();
                     api.loadForm({
-                       organization: formTarget.getAttribute('fh-organization') || formTarget.getAttribute('fh-org'),
-                       team: formTarget.getAttribute('fh-team'),
-                       form: formTarget.getAttribute('fh-form'),
-                       viewMode: formTarget.getAttribute('fh-view-mode') || 'modal'
+                        organization: formTarget.getAttribute('fh-organization') || formTarget.getAttribute('fh-org'),
+                        team: formTarget.getAttribute('fh-team'),
+                        form: formTarget.getAttribute('fh-form'),
+                        viewMode: formTarget.getAttribute('fh-view-mode') || 'modal',
+                        saveButtonMarkup: ''
                     });
                     return false;
                 });

@@ -1,0 +1,17 @@
+{
+    "config" : {
+        "prod": {
+            "aws": {
+                "key" : "",
+                "secret" : "",
+                "bucket": "use.formhero.io"
+            },
+          "sftp": {
+            "host": "formheroinc.sftp.wpengine.com",
+            "port": "2222",
+            "username": "",
+            "password": ""
+	      }
+        }
+    }
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html class="fill">
+<head>
+  <meta charset="UTF-8">
+  <title>FormHero.js Integration</title>
+  <style>
+	html.fill > body {
+	  background-color: #336688;
+	  font-family: Verdana, Geneva, sans-serif;
+	}
+
+	html.fill > body, div.fill {
+	  top: 0;
+	  bottom: 0;
+	  left: 0;
+	  right: 0;
+	}
+
+	div.content-wrapper {
+	  position: absolute;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	}
+
+	.nice-button {
+	  padding: 10px 10px;
+	  border-radius: 5px;
+	  background-color: #003355;
+	  color: white;
+	  text-decoration: none;
+	  text-transform: uppercase;
+	  cursor: pointer;
+	  margin-right: 20px;
+	}
+  </style>
+</head>
+<body>
+  <div class="content-wrapper fill">
+      <a class="nice-button" fh-form="test-form" fh-organization="smart-forms" fh-team="proof-of-concept">Launch Without Javascript</a><br><br>
+      <div class="nice-button">Launch Form from JavaScript</div>
+    </div>
+    <script src="https://use.formhero.io/latest/formhero.js"></script>
+  
+    <script>
+    formhero.setFormHeroHost('td.formhero.io');
+	formhero.useHttps(true);
+
+	document.querySelectorAll('div.nice-button')[0].addEventListener('click', function() {
+	  formhero.loadForm({
+		 form:"test-form",
+		 organization: "smart-forms",
+		 team: "proof-of-concept" 
+		}, {
+		   //"transfer.type": "internal",
+		   "client.givenName": "Theresa",
+		   "client.familyName": "Gerth"
+		}, function() { 
+		   console.log("The user closed the modal!");}).then(
+		   function(successResult) {
+			  console.log("Form Success:", successResult);
+		   },
+		   function(cancelledResult){
+			  console.log("Form Cancelled:", cancelledResult);
+		   }
+	   ).catch(function(exceptionResult) {
+		alert("On Exception");
+	   });
+	});
+    </script>
+
+</body>
+</html>
