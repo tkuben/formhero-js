@@ -115,7 +115,7 @@
         <h3>Codepen Example</h3>
         <p>
         <ul>
-            <li><a href="https://codepen.io/formhero/pen/oGPKBN?editors=1100" target="_blank">Try it out</a>
+            <li><a href="https://codepen.io/formhero/pen/wgJOMP/left?editors=1100" target="_blank">Try it out</a>
             </li>
         </ul>
         </p>
@@ -125,17 +125,14 @@
         <pre class="noescape prettyprint lang-lua">formhero.loadForm({
   form:"my-form-name",
   organization: "fh",
-  team: "demos" 
+  team: "demos",
+  onCloseFn: function() { console.log("The user closed the modal"); },
+  onUpdateFn: function(status) { console.log("The user moved to a new area in the form"); }
 }, 
 { /* Map of data to pass into form */
   "customer.firstName": "Daniel",
   "customer.lastName": "Radcliffe"
-}, 
-  function() { 
-    /* Called when the Smart Form window is closed */
-    console.log("The user closed the modal!");
-})
-.then(
+}).then(
   function(successResult) {
     // The successResult object contains the data that was collected.
     // Use this object and space to process the data via your services.
@@ -181,7 +178,7 @@ canceledResult: { } // An object containing
   state:"form-saved-but-incomplete"
 </pre>
         <h3>Usage</h3>
-        <p><code>formhero.loadForm(options, &lt;dataMap&gt;, &lt;onCloseCallback&gt;)</code>
+        <p><code>formhero.loadForm(options, &lt;dataMap&gt;)</code>
         <h3>Instructions</h3>
         <p>You may also call FormHero from within your own JavaScript code. This method provides the most functionality
             to your web development team, including complete control over the collected data and notification about when
@@ -189,8 +186,17 @@ canceledResult: { } // An object containing
         <h3>Required Parameters</h3>
         <p>
         <ul>
-            <li><strong>options:</strong> object with team, form, organization properties that match the teamId, formId
-                and organizationId in FormHero. <u>object</u>.
+            <li><strong>options:</strong> object with the following properties:
+                <ul><li><b>organization</b>: the FormHero organization short name</li>
+                    <li><b>team</b>: the FormHero team short name</li>
+                    <li><b>form</b>: the Smart Form slug/short name</li>
+                    <li>[<b>viewMode</b>]: ‘page’ / ‘modal’, defaults to modal. When using ‘page’ the smart form is launched in the current window and no callbacks / promise resolution will occur</li>
+                    <li>[<b>onCloseFn</b>]: optional callback handler when user closes modal</li>
+                    <li>[<b>onUpdateFn</b>]: optional callback handler when user moves through form</li>
+                    <li>[<b>cancelButtonMarkup</b>]: optional HTML to use as your cancel button</li>
+                    <li>[<b>closeButtonMarkup</b>]: optional HTML to use as your close button (displayed only after form submission)</li>
+                    <li>[<b>saveButtonMarkup</b>]: optional HTML to use for a save button (you must implement your own save by handling the cancelEvent and persisting the data)</li>
+                </ul>
             </li>
         </ul>
         </p>
@@ -201,13 +207,11 @@ canceledResult: { } // An object containing
                 Fields not used in the form will still be transmitted when the form is submitted, and can be used to
                 drive branch choices, populate PDF fields, etc. <u>object</u>.
             </li>
-            <li><strong>onCloseCallback:</strong> function to be called immediately upon form close. <u>function</u>.
-            </li>
         </ul>
         </p>
         <h3>Returns</h3>
-        <p>
-        <ul>
+        <p>formhero.loadForm(...) returns a promise that resolves to a formResult object with the following properties:
+        <ul style="padding-left: 60px;">
             <li><strong>collectedData:</strong> a map of field-binding/value pairs <u>object</u>.</li>
             <li><strong>outputFiles:</strong> array of { title, mimetype, sessionId, url } objects that can be retrieved
                 from the server. These obects are only available for a limited time (default: 10 minutes). <u>array</u>.
@@ -225,7 +229,7 @@ canceledResult: { } // An object containing
         <h3>Codepen Example</h3>
         <p>
         <ul>
-            <li><a href="https://codepen.io/artharrison/pen/oWKqwM/left?editors=1111" target="_blank">Try it out</a>
+            <li><a href="https://codepen.io/formhero/pen/dNWpQj/left?editors=1111" target="_blank">Try it out</a>
             </li>
         </ul>
         </p>
