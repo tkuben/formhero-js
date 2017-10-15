@@ -237,7 +237,7 @@ canceledResult: { } // An object containing
         <h2 id="retrieving_documents">Retrieving Documents</h2>
         <p>The result object returned to your resolve function will contain a ‘collectedData’ field, which is a map of
             the field-name / value pairs resulting from the user’s submission of the document.<br><br>
-            This object will also contain a stringified ‘submittedAt’ timestamp, and an ‘outputFiles’ array object. When
+            This object will also contain a stringified ‘submittedAt’ timestamp, an ‘outputFiles’ array object, a sessionId and a JWT token. When
             documents are signed or generated as a part of the output, this array will contain objects in the following
             format:
         </p>
