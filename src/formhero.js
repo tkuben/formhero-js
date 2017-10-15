@@ -150,11 +150,10 @@ var formhero = (function (api) {
                     }
                 }
             }
-            else if(fhMessage.fhStatus)
+            else if(fhMessage.fhStatus && callbackRegistry[fhMessage.iframeId])
             {
                 //This is an update on the current state of the smart form.
-                console.log("FhStatus message received from the Smart Form: ", fhMessage);
-                callbackRegistry[fhMessage.iframeId]['onUpdate'](fhMessage.fhResult);
+                if(callbackRegistry[fhMessage.iframeId]['onUpdate']) callbackRegistry[fhMessage.iframeId]['onUpdate'](fhMessage.fhResult);
             }
 
             //Notification specifically about closing the dialog
