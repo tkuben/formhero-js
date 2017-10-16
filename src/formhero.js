@@ -153,7 +153,7 @@ var formhero = (function (api) {
             else if(fhMessage.fhStatus && callbackRegistry[fhMessage.iframeId])
             {
                 //This is an update on the current state of the smart form.
-                if(callbackRegistry[fhMessage.iframeId]['onUpdate']) callbackRegistry[fhMessage.iframeId]['onUpdate'](fhMessage.fhResult);
+                if(callbackRegistry[fhMessage.iframeId]['onStatus']) callbackRegistry[fhMessage.iframeId]['onStatus'](fhMessage.fhStatus);
             }
 
             //Notification specifically about closing the dialog
@@ -280,10 +280,10 @@ var formhero = (function (api) {
      *           path: array of objects indicating the user's path through the formflow, each of which includes the uuid and label of the nodes on the path
      *        }
      */
-    api.loadForm = function(options, dataMap, onCloseFn, onUpdateFn) {
+    api.loadForm = function(options, dataMap, onCloseFn, onStatusFn) {
 
         var closeHandlerFn = onCloseFn || options.onCloseFn;
-        var onUpdateHandlerFn = onUpdateFn || options.onUpdateFn;
+        var onStatusHandlerFn = onStatusFn || options.onStatusFn;
 
         return new Promise(function(resolve, reject) {
             /* if the user calls us with a data map, we create a session on the server, grab the JWT token and then ensure the
@@ -346,7 +346,7 @@ var formhero = (function (api) {
                 closeHandler: closeHandlerFn || function() {},
                 onFormSuccess: resolve,
                 onFormCancel: reject,
-                onUpdate: onUpdateHandlerFn || function() {},
+                onStatus: onStatusHandlerFn || function() {},
                 isSettled: false
             };
 
