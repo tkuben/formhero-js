@@ -117,6 +117,17 @@ var formhero = (function (api) {
         else FORMHERO_PROTOCOL = "http://";
     };
 
+    api.closeOpenForms = function() {
+        var overlayElements = Array.prototype.slice.call(document.querySelectorAll('.formhero-overlay'));
+        var iframeContainers = Array.prototype.slice.call(document.querySelectorAll('.formhero-iframe-wrapper'));
+
+        var elementArray = overlayElements.concat(iframeContainers);
+
+        elementArray.forEach(function(el) {
+            document.body.removeChild(el);
+        });
+    };
+
     window.addEventListener('message', function(event) {
 
         try {
@@ -190,7 +201,7 @@ var formhero = (function (api) {
         }
     }, false);
 
-    function createSession(options, dataMap) {
+    function createSession(options, prepopulatedData, signedData) {
         return new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
 
@@ -213,8 +224,8 @@ var formhero = (function (api) {
                 org: options.organization,
                 team: options.team,
                 slug: options.form,
-                prepopulatedData: dataMap,
-                fieldData: dataMap,   //This one needs to come out once the formhero-ui is using prepopulatedData
+                prepopulatedData: prepopulatedData,
+                signedData: signedData,
                 cname: options.cname
             }));
         });
@@ -285,6 +296,9 @@ var formhero = (function (api) {
         var closeHandlerFn = onCloseFn || options.onCloseFn;
         var onStatusHandlerFn = onStatusFn || options.onStatusFn;
 
+        var prepopulatedData = options.prepopulatedData || dataMap;
+        var signedData = options.signedPrepopulatedData;
+
         return new Promise(function(resolve, reject) {
             /* if the user calls us with a data map, we create a session on the server, grab the JWT token and then ensure the
                token is included in the URL when we load the form. The FormHeroUI then looks after loading the data when the form kicks off.
@@ -351,8 +365,8 @@ var formhero = (function (api) {
             };
 
 
-            if(dataMap) {
-                createSession(options, dataMap).then(
+            if(prepopulatedData || signedData) {
+                createSession(options, prepopulatedData, signedData).then(
                     function(response) {
                         formUrl += '&jwt=' + response.jwt;
                         //console.log("Loading iframe with " + formUrl);
