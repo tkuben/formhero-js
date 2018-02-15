@@ -2,7 +2,7 @@ module.exports = function(gulp, plugins, buildProperties)
 {
     var parallelize = require("concurrent-transform");
 
-    gulp.task('deploy:prod', ['deploy:setProdPath', 'build:dist', 'sftp'], function(){
+    gulp.task('deploy:prod', ['deploy:setProdPath', 'build:dist' /*, 'sftp'*/], function(){
         // create a new publisher
         return doDeploy('latest');
     });

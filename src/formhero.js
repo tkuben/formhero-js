@@ -313,9 +313,9 @@ var formhero = (function (api) {
             if(typeof signedRequest != 'undefined')
             {
                 var jwtParts = signedRequest.split('.');
-                var jwtBody = JSON.parse(window.atob(parts[1]));
+                var jwtBody = JSON.parse(window.atob(jwtParts[1]));
                 if(jwtBody.org) jwtBody.organization = jwtBody.org;
-                if(typeof jwtBody.form === 'undefined' || typeof jwt.organization === 'undefined' || typeof jwt.team === 'undefined')
+                if(typeof jwtBody.form === 'undefined' || typeof jwtBody.organization === 'undefined' || typeof jwtBody.team === 'undefined')
                 {
                     console.error("You must pass an organization, team and form in the body of the JWT when calling formHero.");
                     return;
