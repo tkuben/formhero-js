@@ -354,8 +354,8 @@ var formhero = (function (api) {
             };
 
 
-            if(prepopulatedData || signedData) {
-                createSession(options, prepopulatedData, signedData).then(
+            if(prepopulatedData || signedRequest) {
+                createSession(options, prepopulatedData, signedRequest).then(
                     function(response) {
                         formUrl += '&jwt=' + response.jwt;
                         //console.log("Loading iframe with " + formUrl);
