@@ -313,12 +313,18 @@ var formhero = (function (api) {
 
             if(typeof signedRequest != 'undefined')
             {
-                var jwtParts = signedRequest.split('.');
-                var jwtBody = JSON.parse(window.atob(jwtParts[1]));
-                if(jwtBody.org) jwtBody.organization = jwtBody.org;
-                options.organization = jwtBody.organization;
-                options.form = jwtBody.form;
-                options.team = jwtBody.team;
+                try {
+                    var jwtParts = signedRequest.split('.');
+                    var jwtBody = JSON.parse(window.atob(jwtParts[1]));
+                    if (jwtBody.org) jwtBody.organization = jwtBody.org;
+                    options.organization = jwtBody.organization;
+                    options.form = jwtBody.form;
+                    options.team = jwtBody.team;
+                }
+                catch(e)
+                {
+                    reject("The signedRequest is invalid or malformed.");
+                }
             }
 
             if(typeof options === 'undefined' || typeof options.form === 'undefined' || typeof options.organization === 'undefined')
