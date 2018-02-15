@@ -298,6 +298,7 @@ var formhero = (function (api) {
         var signedRequest = options.signedRequest;
 
         return new Promise(function(resolve, reject) {
+            if(!options) reject("You must provide an options object with organization, team and form defined.");
             /* if the user calls us with a data map, we create a session on the server, grab the JWT token and then ensure the
                token is included in the URL when we load the form. The FormHeroUI then looks after loading the data when the form kicks off.
              */
@@ -315,15 +316,14 @@ var formhero = (function (api) {
                 var jwtParts = signedRequest.split('.');
                 var jwtBody = JSON.parse(window.atob(jwtParts[1]));
                 if(jwtBody.org) jwtBody.organization = jwtBody.org;
-                if(typeof jwtBody.form === 'undefined' || typeof jwtBody.organization === 'undefined' || typeof jwtBody.team === 'undefined')
-                {
-                    console.error("You must pass an organization, team and form in the body of the JWT when calling formHero.");
-                    return;
-                }
+                options.organization = jwtBody.organization;
+                options.form = jwtBody.form;
+                options.team = jwtBody.team;
             }
-            else if(typeof options === 'undefined' || typeof options.form === 'undefined' || typeof options.organization === 'undefined')
+
+            if(typeof options === 'undefined' || typeof options.form === 'undefined' || typeof options.organization === 'undefined')
             {
-                console.error("You must pass an options object with an organization and a form when calling formHero.");
+                console.error("You must pass an options object with an organization and a form, or provide them in the signedRequest, when calling formHero.");
                 return;
             }
 
