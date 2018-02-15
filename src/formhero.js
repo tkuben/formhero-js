@@ -37,23 +37,14 @@ var formhero = (function (api) {
     var deferClosingToFormHeroUi = false;
     var formCount = 0;
     var callbackRegistry = {};
-
-    ${hostOverride}
+    var hostDetails = {
+        base: 'formhero.io',
+        protocol: 'https://',
+        servicesPrefix: 'services'
+    };
 
     function getFormHeroServicesUrl() {
-        var formheroHost = 'formhero.io';
-        var protocol = 'https://';
-        var formheroHost = 'formhero.io';
-        if(typeof FORMHERO_PROTOCOL != 'undefined')
-        {
-            protocol = FORMHERO_PROTOCOL;
-        }
-
-        if(typeof FORMHERO_HOST != 'undefined') {
-            formheroHost = FORMHERO_HOST;
-        }
-
-        return protocol + 'services.' + formheroHost;
+        return hostDetails.protocol + hostDetails.servicesPrefix + '.' + hostDetails.base;
     }
 
     function flatMapper(objectData, pair)
@@ -106,15 +97,22 @@ var formhero = (function (api) {
         return objectData;
     };
 
-    api.setFormHeroHost = function(host)
+    api.setFormHeroHost = function(options)
     {
-        FORMHERO_HOST = host;
+        if(typeof options === 'string') {
+            hostDetails.base = options;
+        }
+        else {
+            if(options.base) hostDetails.base = options.base;
+            if(options.protocol) hostDetails.protocol = options.protocol;
+            if(options.servicesPrefix) hostDetails.servicesPrefix = options.servicesPrefix;
+        }
     };
 
     api.useHttps = function(useHttps)
     {
-        if(useHttps) FORMHERO_PROTOCOL = "https://";
-        else FORMHERO_PROTOCOL = "http://";
+        if(useHttps) hostDetails.protocol = "https://";
+        else hostDetails.protocol = "http://";
     };
 
     api.closeOpenForms = function() {
@@ -312,40 +310,31 @@ var formhero = (function (api) {
              * our code fast, and to ensure that we don't have collisions with libraries that the user has loaded in their page.
              */
 
-            if(typeof options === 'undefined' || typeof options.form === 'undefined' || typeof options.organization === 'undefined')
+            if(typeof signedRequest != 'undefined')
+            {
+                var jwtParts = signedRequest.split('.');
+                var jwtBody = JSON.parse(window.atob(parts[1]));
+                if(jwtBody.org) jwtBody.organization = jwtBody.org;
+                if(typeof jwtBody.form === 'undefined' || typeof jwt.organization === 'undefined' || typeof jwt.team === 'undefined')
+                {
+                    console.error("You must pass an organization, team and form in the body of the JWT when calling formHero.");
+                    return;
+                }
+            }
+            else if(typeof options === 'undefined' || typeof options.form === 'undefined' || typeof options.organization === 'undefined')
             {
                 console.error("You must pass an options object with an organization and a form when calling formHero.");
                 return;
             }
 
-            var form = options.form;
-            var protocol = 'https://';
-            var formheroHost = 'formhero.io';
-            if(typeof FORMHERO_PROTOCOL != 'undefined')
-            {
-                protocol = FORMHERO_PROTOCOL;
-            }
-
-            if(typeof FORMHERO_HOST != 'undefined') {
-                formheroHost = FORMHERO_HOST;
-            }
-
-            //If the caller has configured a CNAME, use the CNAME instead of our <org>.formhero.io host URL
-            if(options.cname) {
-                formheroHost = options.cname;
-            }
-            else {
-                formheroHost = encodeURIComponent(options.organization) + '.' + formheroHost;
-            }
-
+            var formheroHost = options.cname || encodeURIComponent(options.organization) + '.' + hostDetails.base;
             var modeParam = '';
-
             if(options.mode)
             {
                 modeParm = '&mode=' + modeParam;
             }
             var formUrl = [
-                protocol,
+                hostDetails.protocol,
                 formheroHost,
                 '/#/',
                 encodeURIComponent(options.team),
@@ -372,8 +361,12 @@ var formhero = (function (api) {
                         //console.log("Loading iframe with " + formUrl);
                         loadForm(formUrl, formFrameIdentifier, options).then(resolve, reject);
                     },
-                    function() {
-
+                    function(status) {
+                        if(status >= 500)
+                        {
+                            alert("Invalid Data: We were unable to validate the prepopulated data provided.");
+                            reject(status);
+                        }
                     }
                 );
             }
