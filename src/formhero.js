@@ -199,7 +199,7 @@ var formhero = (function (api) {
         }
     }, false);
 
-    function createSession(options, prepopulatedData, signedData) {
+    function createSession(options, prepopulatedData, signedRequest) {
         return new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
 
@@ -223,7 +223,7 @@ var formhero = (function (api) {
                 team: options.team,
                 slug: options.form,
                 prepopulatedData: prepopulatedData,
-                signedData: signedData,
+                signedRequest: signedRequest,
                 cname: options.cname
             }));
         });
