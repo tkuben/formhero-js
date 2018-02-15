@@ -295,7 +295,7 @@ var formhero = (function (api) {
         var onStatusHandlerFn = onStatusFn || options.onStatusFn;
 
         var prepopulatedData = options.prepopulatedData || dataMap;
-        var signedData = options.signedPrepopulatedData;
+        var signedRequest = options.signedRequest;
 
         return new Promise(function(resolve, reject) {
             /* if the user calls us with a data map, we create a session on the server, grab the JWT token and then ensure the
