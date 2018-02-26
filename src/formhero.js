@@ -311,7 +311,7 @@ var formhero = (function (api) {
              * our code fast, and to ensure that we don't have collisions with libraries that the user has loaded in their page.
              */
 
-            if(typeof signedRequest != 'undefined')
+            if(typeof signedRequest != 'undefined' && signedRequest)
             {
                 try {
                     var jwtParts = signedRequest.split('.');
