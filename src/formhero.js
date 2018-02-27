@@ -340,16 +340,25 @@ var formhero = (function (api) {
                 modeParm = '&mode=' + modeParam;
             }
 
+            var previewUrl = (options.cuid) ? [['form-preview/'],['/', options.cuid, '/']] : [[],[]];
+
             var formUrl = [
                 hostDetails.protocol,
                 formheroHost,
-                '/#/'];
-
-            if(options.cuid){ formUrl.push('form-preview/') };
-            formUrl.push(encodeURIComponent(options.team), '/', encodeURIComponent(options.form));
-            if(options.cuid){ formUrl.push('/', options.cuid, '/')};
-            formUrl.push('?new=true', modeParam);
-            formUrl = formUrl.join('');
+                '/#/',
+                ]
+                .concat(previewUrl[0])
+                .concat([
+                    encodeURIComponent(options.team),
+                    '/',
+                    encodeURIComponent(options.form),
+                ])
+                .concat(previewUrl[1])
+                .concat([
+                    '?new=true',
+                    modeParam
+                ])
+                .join('');
 
             var formFrameIdentifier = 'form-frame-' + formCount;
             callbackRegistry[formFrameIdentifier] = {
