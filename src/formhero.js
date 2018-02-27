@@ -76,7 +76,7 @@ var formhero = (function (api) {
         }
     }
 
-    function htmlToElement(html) {3
+    function htmlToElement(html) {
         var template = document.createElement('template');
         template.innerHTML = html;
         return template.content.firstChild;
@@ -340,20 +340,25 @@ var formhero = (function (api) {
                 modeParm = '&mode=' + modeParam;
             }
 
-            const previewUrl = (options.cuid) ? [['form-preview/'],['/', options.cuid, '/']] : [[],[]];
+            var previewUrl = (options.cuid) ? [['form-preview/'],['/', options.cuid, '/']] : [[],[]];
 
             var formUrl = [
                 hostDetails.protocol,
                 formheroHost,
                 '/#/',
-                ...previewUrlPartOne[0],
-                encodeURIComponent(options.team),
-                '/',
-                encodeURIComponent(options.form),
-                ...previewUrlPartOne[1],
-                '?new=true',
-                modeParam
-            ].join('');
+                ]
+                .concat(previewUrl[0])
+                .concat([
+                    encodeURIComponent(options.team),
+                    '/',
+                    encodeURIComponent(options.form),
+                ])
+                .concat(previewUrl[1])
+                .concat([
+                    '?new=true',
+                    modeParam
+                ])
+                .join('');
 
             var formFrameIdentifier = 'form-frame-' + formCount;
             callbackRegistry[formFrameIdentifier] = {
