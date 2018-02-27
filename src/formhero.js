@@ -339,13 +339,18 @@ var formhero = (function (api) {
             {
                 modeParm = '&mode=' + modeParam;
             }
+
+            const previewUrl = (options.versionNumber) ? [['form-preview/'],['/', options.versionNumber, '/']] : [[],[]];
+
             var formUrl = [
                 hostDetails.protocol,
                 formheroHost,
                 '/#/',
+                ...previewUrlPartOne[0],
                 encodeURIComponent(options.team),
                 '/',
                 encodeURIComponent(options.form),
+                ...previewUrlPartOne[1],
                 '?new=true',
                 modeParam
             ].join('');
