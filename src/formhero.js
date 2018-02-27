@@ -340,7 +340,7 @@ var formhero = (function (api) {
                 modeParm = '&mode=' + modeParam;
             }
 
-            const previewUrl = (options.versionNumber) ? [['form-preview/'],['/', options.versionNumber, '/']] : [[],[]];
+            const previewUrl = (options.cudi) ? [['form-preview/'],['/', options.cuid, '/']] : [[],[]];
 
             var formUrl = [
                 hostDetails.protocol,
