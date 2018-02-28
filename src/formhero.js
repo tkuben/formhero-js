@@ -347,18 +347,14 @@ var formhero = (function (api) {
                 formheroHost,
                 '/#/',
                 ]
-                .concat(previewUrl[0])
-                .concat([
-                    encodeURIComponent(options.team),
-                    '/',
-                    encodeURIComponent(options.form),
-                ])
-                .concat(previewUrl[1])
-                .concat([
-                    '?new=true',
-                    modeParam
-                ])
+                .concat(
+                    previewUrl[0],
+                    [encodeURIComponent(options.team), '/', encodeURIComponent(options.form)],
+                    previewUrl[1],
+                    ['?new=true', modeParam ]
+                )
                 .join('');
+
 
             var formFrameIdentifier = 'form-frame-' + formCount;
             callbackRegistry[formFrameIdentifier] = {
