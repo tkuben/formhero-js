@@ -222,7 +222,8 @@ var formhero = (function (api) {
                 org: options.organization,
                 team: options.team,
                 slug: options.form,
-                prepopulatedData: prepopulatedData,
+                prepopulatedData: prepopulatedData, //deprecated name
+                formData: formData,
                 signedRequest: signedRequest,
                 cname: options.cname
             }));
