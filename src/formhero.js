@@ -76,7 +76,7 @@ var formhero = (function (api) {
         }
     }
 
-    function htmlToElement(html) {3
+    function htmlToElement(html) {
         var template = document.createElement('template');
         template.innerHTML = html;
         return template.content.firstChild;
@@ -312,7 +312,7 @@ var formhero = (function (api) {
              * our code fast, and to ensure that we don't have collisions with libraries that the user has loaded in their page.
              */
 
-            if(typeof signedRequest != 'undefined')
+            if(typeof signedRequest != 'undefined' && signedRequest)
             {
                 try {
                     var jwtParts = signedRequest.split('.');
@@ -340,16 +340,22 @@ var formhero = (function (api) {
             {
                 modeParm = '&mode=' + modeParam;
             }
+
+            var previewUrl = (options.cuid) ? [['form-preview/'],['/', options.cuid, '/']] : [[],[]];
+
             var formUrl = [
                 hostDetails.protocol,
                 formheroHost,
                 '/#/',
-                encodeURIComponent(options.team),
-                '/',
-                encodeURIComponent(options.form),
-                '?new=true',
-                modeParam
-            ].join('');
+                ]
+                .concat(
+                    previewUrl[0],
+                    [encodeURIComponent(options.team), '/', encodeURIComponent(options.form)],
+                    previewUrl[1],
+                    ['?new=true', modeParam ]
+                )
+                .join('');
+
 
             var formFrameIdentifier = 'form-frame-' + formCount;
             callbackRegistry[formFrameIdentifier] = {
