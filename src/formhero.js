@@ -427,7 +427,7 @@ var formhero = (function (api) {
         iframe.className = 'formhero-iframe embedded';
         iframe.id = 'form-frame-' + formCount;
         iframe.name = 'form-frame-' + formCount;
-        iframe.src = formUrl + '&viewMode=embedded';
+        iframe.src = formUrl;
         iframe.frameborder = 0;
         iframe.frameBorder = "0";
         iframe.allowTransparency = "true";
