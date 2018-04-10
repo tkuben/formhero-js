@@ -223,7 +223,7 @@ var formhero = (function (api) {
                 team: options.team,
                 slug: options.form,
                 prepopulatedData: prepopulatedData, //deprecated name
-                formData: formData,
+                formData: prepopulatedData,
                 signedRequest: signedRequest,
                 cname: options.cname
             }));
@@ -291,7 +291,6 @@ var formhero = (function (api) {
      *        }
      */
     api.loadForm = function(options, dataMap, onCloseFn, onStatusFn) {
-
         var closeHandlerFn = onCloseFn || options.onCloseFn;
         var onStatusHandlerFn = onStatusFn || options.onStatusFn;
 
@@ -333,6 +332,10 @@ var formhero = (function (api) {
                 console.error("You must pass an options object with an organization and a form, or provide them in the signedRequest, when calling formHero.");
                 return;
             }
+            
+            if (options.viewMode === 'embedded' && typeof options.selector === 'undefined'){
+                console.error("You must pass a selector as an option if you want to embed your form within a page");
+            }
 
             var formheroHost = options.cname || encodeURIComponent(options.organization) + '.' + hostDetails.base;
             var modeParam = '';
@@ -356,7 +359,6 @@ var formhero = (function (api) {
                 )
                 .join('');
 
-
             var formFrameIdentifier = 'form-frame-' + formCount;
             callbackRegistry[formFrameIdentifier] = {
                 closeHandler: closeHandlerFn || function() {},
@@ -366,8 +368,8 @@ var formhero = (function (api) {
                 isSettled: false
             };
 
-
             if(prepopulatedData || signedRequest) {
+                console.log('working');
                 createSession(options, prepopulatedData, signedRequest).then(
                     function(response) {
                         formUrl += '&jwt=' + response.jwt;
@@ -391,15 +393,15 @@ var formhero = (function (api) {
     };
 
     function loadForm(formUrl, formFrameIdentifier, options) {
-
         return new Promise(function(resolve, reject) {
-
             switch(options.viewMode)
             {
-
                 case 'page':
                 case 'window':
                     loadFormInPage(formUrl, options);
+                    break;
+                case 'embedded':
+                    loadFormEmbedded(formUrl, formFrameIdentifier, options);
                     break;
                 default:
                     loadFormInModal(formUrl, formFrameIdentifier, options);
@@ -408,9 +410,51 @@ var formhero = (function (api) {
         });
     }
 
-    function loadFormInPage(formUrl, options)
-    {
+    function loadFormInPage(formUrl, options){
         document.location = formUrl;
+    }
+    
+    function loadFormEmbedded(formUrl, formFrameIdentifier, options){
+        console.log('FormHero Embedded');
+        formUrl += '&iframeId=' + formFrameIdentifier;
+        
+        if(true) { //else {
+            var formParent = document.querySelector(options.selector);
+            
+            var iframeContainer = document.createElement('div');
+            iframeContainer.id = 'formhero-iframe-wrapper-' + formCount;
+            iframeContainer.className = 'formhero-iframe-wrapper visible embedded';
+
+            var iframe = document.createElement('iframe');
+            iframe.className = 'formhero-iframe embedded';
+            iframe.id = 'form-frame-' + formCount;
+            iframe.name = 'form-frame-' + formCount;
+            iframe.src = formUrl + '&viewMode=embedded';
+            iframe.frameborder = 0;
+            iframe.frameBorder = "0";
+            iframe.allowTransparency = "true";
+
+            // SPINNER //
+            iframeContainer.appendChild(getSvgContainerElement());
+            //Remove the spinner once the iframe has loaded.
+            iframe.onload = function () {
+                var spinner = document.getElementById('fh-spinner');
+                spinner.parentNode.removeChild(spinner);
+            };
+            
+            // ERRORS //
+            if (formParent.clientHeight < 500){
+                console.log("The form's parent container should not have a height smaller than 500px");
+            };
+            
+            if (formParent.clientHeight < 300){
+                console.log("The form's parent container should not have a width smaller than 300px");
+            };
+
+            iframeContainer.appendChild(iframe);
+            formParent.appendChild(iframeContainer);
+            formCount++;
+        }
     }
 
     function loadFormInModal(formUrl, formFrameIdentifier, options)
