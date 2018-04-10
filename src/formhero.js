@@ -369,7 +369,6 @@ var formhero = (function (api) {
             };
 
             if(prepopulatedData || signedRequest) {
-                console.log('working');
                 createSession(options, prepopulatedData, signedRequest).then(
                     function(response) {
                         formUrl += '&jwt=' + response.jwt;
@@ -418,43 +417,41 @@ var formhero = (function (api) {
         console.log('FormHero Embedded');
         formUrl += '&iframeId=' + formFrameIdentifier;
         
-        if(true) { //else {
-            var formParent = document.querySelector(options.selector);
-            
-            var iframeContainer = document.createElement('div');
-            iframeContainer.id = 'formhero-iframe-wrapper-' + formCount;
-            iframeContainer.className = 'formhero-iframe-wrapper visible embedded';
+        var formParent = document.querySelector(options.selector);
 
-            var iframe = document.createElement('iframe');
-            iframe.className = 'formhero-iframe embedded';
-            iframe.id = 'form-frame-' + formCount;
-            iframe.name = 'form-frame-' + formCount;
-            iframe.src = formUrl + '&viewMode=embedded';
-            iframe.frameborder = 0;
-            iframe.frameBorder = "0";
-            iframe.allowTransparency = "true";
+        var iframeContainer = document.createElement('div');
+        iframeContainer.id = 'formhero-iframe-wrapper-' + formCount;
+        iframeContainer.className = 'formhero-iframe-wrapper visible embedded';
 
-            // SPINNER //
-            iframeContainer.appendChild(getSvgContainerElement());
-            //Remove the spinner once the iframe has loaded.
-            iframe.onload = function () {
-                var spinner = document.getElementById('fh-spinner');
-                spinner.parentNode.removeChild(spinner);
-            };
-            
-            // ERRORS //
-            if (formParent.clientHeight < 500){
-                console.log("The form's parent container should not have a height smaller than 500px");
-            };
-            
-            if (formParent.clientHeight < 300){
-                console.log("The form's parent container should not have a width smaller than 300px");
-            };
+        var iframe = document.createElement('iframe');
+        iframe.className = 'formhero-iframe embedded';
+        iframe.id = 'form-frame-' + formCount;
+        iframe.name = 'form-frame-' + formCount;
+        iframe.src = formUrl + '&viewMode=embedded';
+        iframe.frameborder = 0;
+        iframe.frameBorder = "0";
+        iframe.allowTransparency = "true";
 
-            iframeContainer.appendChild(iframe);
-            formParent.appendChild(iframeContainer);
-            formCount++;
-        }
+        // SPINNER //
+        iframeContainer.appendChild(getSvgContainerElement());
+        //Remove the spinner once the iframe has loaded.
+        iframe.onload = function () {
+            var spinner = document.getElementById('fh-spinner');
+            spinner.parentNode.removeChild(spinner);
+        };
+
+        // ERRORS //
+        if (formParent.clientHeight < 500){
+            console.log("The form's parent container should not have a height smaller than 500px");
+        };
+
+        if (formParent.clientHeight < 300){
+            console.log("The form's parent container should not have a width smaller than 300px");
+        };
+
+        iframeContainer.appendChild(iframe);
+        formParent.appendChild(iframeContainer);
+        formCount++;
     }
 
     function loadFormInModal(formUrl, formFrameIdentifier, options)
