@@ -313,16 +313,17 @@ var formhero = (function (api) {
 
             if(typeof signedRequest != 'undefined')
             {
-                try {
+                try
+                {
                     var jwtParts = signedRequest.split('.');
                     var jwtBody = JSON.parse(window.atob(jwtParts[1]));
                     if (jwtBody.org) jwtBody.organization = jwtBody.org;
-                    options.cname = jwtBody.cname;
-                    options.organization = jwtBody.organization;
-                    options.form = jwtBody.form;
-                    options.team = jwtBody.team;
-                    options.viewMode = jwtBody.viewMode;
-                    options.selector = jwtBody.selector;
+                    options.organization = jwtBody.organization; //must come from jwtBody
+                    options.form = jwtBody.form; //must come from jwtBody
+                    options.team = jwtBody.team; //must come from jwtBody
+                    options.cname = jwtBody.cname || options.cname ;
+                    options.viewMode = jwtBody.viewMode || options.viewMode;
+                    options.selector = jwtBody.selector || options.selector;
                 }
                 catch(e)
                 {
@@ -470,7 +471,7 @@ var formhero = (function (api) {
         //Open in a new tab
         //    window.open(formUrl, "_blank");
         ///}
-        if(true) { //else {
+        if (true) { //else {
             var scrollTop = document.body.scrollTop;
             document.body.classList.add('formhero-scroll-block');
 
