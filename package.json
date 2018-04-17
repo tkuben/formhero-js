@@ -1,12 +1,13 @@
 {
   "name": "formhero-js",
   "description": "A project for our formhero.js integration library which enables the use for FormHero forms within a separately hosted website.",
-  "repository": "https://bitbucket.org/formhero/formhero-js.git",
-  "version": "1.0.0",
+  "repository": "https://github.com/formhero/formhero-js.git",
+  "version": "1.1.1",
   "dependencies": {
     "es6-promise-polyfill": "^1.2.0",
     "node-sass": "^4.8.3"
   },
+  "main": "./dist/formhero.js",
   "devDependencies": {
     "concurrent-transform": "^1.0.0",
     "del": "^0.1.2",
