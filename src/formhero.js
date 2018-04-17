@@ -294,7 +294,7 @@ var formhero = (function (api) {
         var closeHandlerFn = onCloseFn || options.onCloseFn;
         var onStatusHandlerFn = onStatusFn || options.onStatusFn;
 
-        var prepopulatedData = options.prepopulatedData || dataMap;
+        var prepopulatedData = options.prepopulatedData  || options.dataMap || dataMap;
         var signedRequest = options.signedRequest;
 
         return new Promise(function(resolve, reject) {
@@ -317,9 +317,12 @@ var formhero = (function (api) {
                     var jwtParts = signedRequest.split('.');
                     var jwtBody = JSON.parse(window.atob(jwtParts[1]));
                     if (jwtBody.org) jwtBody.organization = jwtBody.org;
+                    options.cname = jwtBody.cname;
                     options.organization = jwtBody.organization;
                     options.form = jwtBody.form;
                     options.team = jwtBody.team;
+                    options.viewMode = jwtBody.viewMode;
+                    options.selector = jwtBody.selector;
                 }
                 catch(e)
                 {
@@ -339,9 +342,9 @@ var formhero = (function (api) {
 
             var formheroHost = options.cname || encodeURIComponent(options.organization) + '.' + hostDetails.base;
             var modeParam = '';
-            if(options.mode)
+            if(options.viewMode) //options.mode?
             {
-                modeParm = '&mode=' + modeParam;
+                modeParam = '&mode=' + options.viewMode;
             }
 
             var previewUrl = (options.cuid) ? [['form-preview/'],['/', options.cuid]] : [[],[]];
@@ -414,9 +417,9 @@ var formhero = (function (api) {
     }
     
     function loadFormEmbedded(formUrl, formFrameIdentifier, options){
-        console.log('FormHero Embedded');
+
         formUrl += '&iframeId=' + formFrameIdentifier;
-        
+
         var formParent = document.querySelector(options.selector);
 
         var iframeContainer = document.createElement('div');
@@ -432,20 +435,12 @@ var formhero = (function (api) {
         iframe.frameBorder = "0";
         iframe.allowTransparency = "true";
 
-        // SPINNER //
-        iframeContainer.appendChild(getSvgContainerElement());
-        //Remove the spinner once the iframe has loaded.
-        iframe.onload = function () {
-            var spinner = document.getElementById('fh-spinner');
-            spinner.parentNode.removeChild(spinner);
-        };
-
         // ERRORS //
-        if (formParent.clientHeight < 500){
-            console.log("The form's parent container should not have a height smaller than 500px");
+        if (formParent.clientHeight < 450){
+            console.log("The form's parent container should not have a height smaller than 450px");
         };
 
-        if (formParent.clientHeight < 300){
+        if (formParent.clientWidth < 300){
             console.log("The form's parent container should not have a width smaller than 300px");
         };
 
