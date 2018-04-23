@@ -231,18 +231,23 @@ var formhero = (function (api) {
 
     }
 
-    function addCssFile(filename){
+      function addCssFile(filename){
 
-        var fileref=document.createElement("link");
-        fileref.setAttribute("rel", "stylesheet");
-        fileref.setAttribute("type", "text/css");
-        fileref.setAttribute("href", filename);
-        if (typeof fileref!="undefined") document.getElementsByTagName("head")[0].appendChild(fileref);
-    }
+        return new Promise(function(resolve, reject) {
+
+          var link=document.createElement("link");
+          link.setAttribute("rel", "stylesheet");
+          link.setAttribute("type", "text/css");
+          link.setAttribute("href", filename);
+          link.onload =  resolve;
+          if (typeof link!="undefined") document.getElementsByTagName("head")[0].appendChild(link);
+        });
+
+      }
 
 
 
-    addCssFile("https://use.formhero.io/${deploy.path}/formhero.css");
+    var cssPromise = addCssFile("https://use.formhero.io/${deploy.path}/formhero.css");
 
     /**
      * Options Object
@@ -291,14 +296,15 @@ var formhero = (function (api) {
      *        }
      */
     api.loadForm = function(options, dataMap, onCloseFn, onStatusFn) {
-        var closeHandlerFn = onCloseFn || options.onCloseFn;
-        var onStatusHandlerFn = onStatusFn || options.onStatusFn;
+      return cssPromise.then(function() {
+          var closeHandlerFn = onCloseFn || options.onCloseFn;
+          var onStatusHandlerFn = onStatusFn || options.onStatusFn;
 
-        var prepopulatedData = options.prepopulatedData  || options.dataMap || dataMap;
-        var signedRequest = options.signedRequest;
+          var prepopulatedData = options.prepopulatedData || options.dataMap || dataMap;
+          var signedRequest = options.signedRequest;
 
-        return new Promise(function(resolve, reject) {
-            if(!options) reject("You must provide an options object with organization, team and form defined.");
+          return new Promise(function (resolve, reject) {
+            if (!options) reject("You must provide an options object with organization, team and form defined.");
             /* if the user calls us with a data map, we create a session on the server, grab the JWT token and then ensure the
                token is included in the URL when we load the form. The FormHeroUI then looks after loading the data when the form kicks off.
              */
@@ -311,106 +317,102 @@ var formhero = (function (api) {
              * our code fast, and to ensure that we don't have collisions with libraries that the user has loaded in their page.
              */
 
-            if(typeof signedRequest != 'undefined')
-            {
-                try
-                {
-                    var jwtParts = signedRequest.split('.');
-                    var jwtBody = JSON.parse(window.atob(jwtParts[1]));
-                    if (jwtBody.org) jwtBody.organization = jwtBody.org;
-                    options.organization = jwtBody.organization; //must come from jwtBody
-                    options.form = jwtBody.form; //must come from jwtBody
-                    options.team = jwtBody.team; //must come from jwtBody
-                    options.cname = jwtBody.cname || options.cname ;
-                    options.viewMode = jwtBody.viewMode || options.viewMode;
-                    options.selector = jwtBody.selector || options.selector;
-                }
-                catch(e)
-                {
-                    reject("The signedRequest is invalid or malformed.");
-                }
+            if (typeof signedRequest != 'undefined') {
+              try {
+                var jwtParts = signedRequest.split('.');
+                var jwtBody = JSON.parse(window.atob(jwtParts[1]));
+                if (jwtBody.org) jwtBody.organization = jwtBody.org;
+                options.organization = jwtBody.organization; //must come from jwtBody
+                options.form = jwtBody.form; //must come from jwtBody
+                options.team = jwtBody.team; //must come from jwtBody
+                options.cname = jwtBody.cname || options.cname;
+                options.viewMode = jwtBody.viewMode || options.viewMode;
+                options.selector = jwtBody.selector || options.selector;
+              }
+              catch (e) {
+                reject("The signedRequest is invalid or malformed.");
+              }
             }
 
-            if(typeof options === 'undefined' || typeof options.form === 'undefined' || typeof options.organization === 'undefined')
-            {
-                console.error("You must pass an options object with an organization and a form, or provide them in the signedRequest, when calling formHero.");
-                return;
+            if (typeof options === 'undefined' || typeof options.form === 'undefined' || typeof options.organization === 'undefined') {
+              console.error("You must pass an options object with an organization and a form, or provide them in the signedRequest, when calling formHero.");
+              return;
             }
-            
-            if (options.viewMode === 'embedded' && typeof options.selector === 'undefined'){
-                console.error("You must pass a selector as an option if you want to embed your form within a page");
+
+            if (options.viewMode === 'embedded' && typeof options.selector === 'undefined') {
+              console.error("You must pass a selector as an option if you want to embed your form within a page");
             }
 
             var formheroHost = options.cname || encodeURIComponent(options.organization) + '.' + hostDetails.base;
             var modeParam = '';
-            if(options.viewMode) //options.mode?
+            if (options.viewMode) //options.mode?
             {
-                modeParam = '&mode=' + options.viewMode;
+              modeParam = '&mode=' + options.viewMode;
             }
 
-            var previewUrl = (options.cuid) ? [['form-preview/'],['/', options.cuid]] : [[],[]];
+            var previewUrl = (options.cuid) ? [['form-preview/'], ['/', options.cuid]] : [[], []];
 
             var formUrl = [
-                hostDetails.protocol,
-                formheroHost,
-                '/#/',
-                ]
-                .concat(
-                    previewUrl[0],
-                    [encodeURIComponent(options.team), '/', encodeURIComponent(options.form)],
-                    previewUrl[1],
-                    ['?new=true', modeParam ]
-                )
-                .join('');
+              hostDetails.protocol,
+              formheroHost,
+              '/#/',
+            ]
+              .concat(
+                previewUrl[0],
+                [encodeURIComponent(options.team), '/', encodeURIComponent(options.form)],
+                previewUrl[1],
+                ['?new=true', modeParam]
+              )
+              .join('');
 
             var formFrameIdentifier = 'form-frame-' + formCount;
             callbackRegistry[formFrameIdentifier] = {
-                closeHandler: closeHandlerFn || function() {},
-                onFormSuccess: resolve,
-                onFormCancel: reject,
-                onStatus: onStatusHandlerFn || function() {},
-                isSettled: false
+              closeHandler: closeHandlerFn || function () {
+              },
+              onFormSuccess: resolve,
+              onFormCancel: reject,
+              onStatus: onStatusHandlerFn || function () {
+              },
+              isSettled: false
             };
 
-            if(prepopulatedData || signedRequest) {
-                createSession(options, prepopulatedData, signedRequest).then(
-                    function(response) {
-                        formUrl += '&jwt=' + response.jwt;
-                        //console.log("Loading iframe with " + formUrl);
-                        loadForm(formUrl, formFrameIdentifier, options).then(resolve, reject);
-                    },
-                    function(status) {
-                        if(status >= 500)
-                        {
-                            alert("Invalid Data: We were unable to validate the prepopulated data provided.");
-                            reject(status);
-                        }
-                    }
-                );
+            if (prepopulatedData || signedRequest) {
+              createSession(options, prepopulatedData, signedRequest).then(
+                function (response) {
+                  formUrl += '&jwt=' + response.jwt;
+                  //console.log("Loading iframe with " + formUrl);
+                  loadForm(formUrl, formFrameIdentifier, options).then(resolve, reject);
+                },
+                function (status) {
+                  if (status >= 500) {
+                    alert("Invalid Data: We were unable to validate the prepopulated data provided.");
+                    reject(status);
+                  }
+                }
+              );
             }
             else {
-                //console.log("Loading iframe with " + formUrl);
-                loadForm(formUrl, formFrameIdentifier, options).then(resolve, reject);
+              //console.log("Loading iframe with " + formUrl);
+              loadForm(formUrl, formFrameIdentifier, options).then(resolve, reject);
             }
+          });
         });
     };
 
     function loadForm(formUrl, formFrameIdentifier, options) {
-        return new Promise(function(resolve, reject) {
-            switch(options.viewMode)
-            {
-                case 'page':
-                case 'window':
-                    loadFormInPage(formUrl, options);
-                    break;
-                case 'embedded':
-                    loadFormEmbedded(formUrl, formFrameIdentifier, options);
-                    break;
-                default:
-                    loadFormInModal(formUrl, formFrameIdentifier, options);
-                    break;
-            }
-        });
+        switch(options.viewMode)
+        {
+            case 'page':
+            case 'window':
+                loadFormInPage(formUrl, options);
+                break;
+            case 'embedded':
+                loadFormEmbedded(formUrl, formFrameIdentifier, options);
+                break;
+            default:
+                loadFormInModal(formUrl, formFrameIdentifier, options);
+
+        }
     }
 
     function loadFormInPage(formUrl, options){
@@ -655,4 +657,14 @@ if(typeof angular != 'undefined') {
     }
 }
 
+
+if(typeof module === "object" && module.exports)
+{
+    module.exports = formhero;
+} else if (typeof define === "function" && define.amd)
+{
+    define(["formhero"], function() {
+        return formhero;
+    });
+}
 
