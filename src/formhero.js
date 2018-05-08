@@ -216,8 +216,10 @@ var formhero = (function (api) {
             xhr.onerror = function() {
                 reject();
             };
-
-            xhr.setRequestHeader('Content-Type', 'application/json');
+          var token = window.sessionStorage.getItem('ngStorage-fhToken') || options.fhToken;
+          token = token.replace(/"/g, '');
+          xhr.setRequestHeader('X-Formhero-Token', token);
+          xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.send(JSON.stringify({
                 org: options.organization,
                 team: options.team,
