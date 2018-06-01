@@ -596,7 +596,7 @@ var formhero = (function (api) {
 
 
 
-    var cssPromise = addCssFile("https://use.formhero.io/,/formhero.css");
+    var cssPromise = addCssFile("https://use.formhero.io/latest/formhero.css");
 
     /**
      * Options Object
